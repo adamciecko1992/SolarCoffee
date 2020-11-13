@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using solarcoffee.services.Product;
+using solarcoffee.web.Serialization;
 
 
 namespace solarcoffee.web.Controllers
@@ -28,8 +29,10 @@ namespace solarcoffee.web.Controllers
         [HttpGet("/api/product")] //po requescie do tej sciezki wydary sie metoda
         public ActionResult GetProduct() {
             _logger.LogInformation("gettin all products");
-           var products =  _productService.GetAllProducts();
-            return Ok(products); //OOk to ActionResult, a w argumencie przyjmuje tresc ktora ma zwrocic
+            var products =  _productService.GetAllProducts();
+            //jak map w JS
+            var productViewModels = products.Select((product) => ProductMapper.SerializeProductModel(product));
+            return Ok(productViewModels); //Ok to ActionResult, a w argumencie przyjmuje tresc ktora ma zwrocic
         }
     }
 }

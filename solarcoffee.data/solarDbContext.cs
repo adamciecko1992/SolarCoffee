@@ -18,7 +18,7 @@ namespace solarcoffee.data
         {
            
         }
-        //Musze stowrzyc tabele Customers, ktora bedzie zawierac Customerow
+        //Musze stowrzyc tabele Customers i wszystkie inne wymienione, ktora bedzie zawierac Customerow zgodnych z modelem
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<CustomerAdress> CustomerAdress { get; set; }
         public virtual DbSet<ProductInventory> ProductInventories { get; set; }
