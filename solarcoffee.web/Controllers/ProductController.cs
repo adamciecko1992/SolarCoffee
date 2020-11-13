@@ -36,3 +36,5 @@ namespace solarcoffee.web.Controllers
         }
     }
 }
+
+//do mapowania modeli na viewmodele sluzy automapperframework

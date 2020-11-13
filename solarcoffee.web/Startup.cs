@@ -15,6 +15,8 @@ using Microsoft.OpenApi.Models;
 using solarcoffee.data;
 using solarcoffee.services;
 using solarcoffee.services.Product;
+using solarcoffee.services.Customer;
+using solarcoffee.services.Inventory;
 
 
 
@@ -49,6 +51,8 @@ namespace solarcoffee.web
             //gruba usluge to dobrze by bylo stworzyc jedna instancje i wykorzystywac ja wielokrotnie, ale moze to prowadzic,
             //do nieoczekiwanych zachowan
             services.AddTransient<IProductService, ProductService>();
+            services.AddTransient<IInventtoryService, InventoryService>();
+            services.AddTransient<ICustomerService, CustomerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
