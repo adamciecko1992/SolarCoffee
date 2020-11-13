@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\solarcoffee.data\solarcoffee.data.csproj" />
+    <ProjectReference Include="..\solarcoffee.services\solarcoffee.services.csproj" />
   </ItemGroup>
 
 </Project>
