@@ -1,0 +1,31 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using solarcoffee.services.Order;
+using solarcoffee.services.Customer;
+using Microsoft.Extensions.Logging;
+using solarcoffee.web.ViewModels;
+
+namespace solarcoffee.web.Controllers
+{
+    [ApiController]
+    public class OrderController : ControllerBase
+    {
+        private readonly ILogger<OrderController> _logger;
+        private readonly IOrderService _orderService;
+        private readonly ICustomerService _customerService;
+
+        public OrderController(ILogger<OrderController> logger, IOrderService orderService, ICustomerService customerService)
+        {
+            _logger = logger;
+            _orderService = orderService;
+            _customerService = customerService;
+        }
+        [HttpPost("/api/invoice")]
+        //[FromBody] to decorator który zaznacza ze tresc ma byc wyciagnieta z body requesta, poki ma odpowiednia strukture bedzie smigac
+        public ActionResult GenerateNewOrder([FromBody] InvoiceModel invoice) {
+            _logger.LogInformation("Generating Invoice");
+            var order = OrderMapper.SerializeInvoiceToOrder(invoice);
+            order.Customer = _customerService.GetById(invoice.CustomerId);
+            return Ok();
+        }
+    }
+}

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using solarcoffee.services.Product;
+
 using solarcoffee.web.Serialization;
 
 
@@ -33,6 +34,15 @@ namespace solarcoffee.web.Controllers
             //jak map w JS
             var productViewModels = products.Select((product) => ProductMapper.SerializeProductModel(product));
             return Ok(productViewModels); //Ok to ActionResult, a w argumencie przyjmuje tresc ktora ma zwrocic
+        }
+
+        //tutaj id jest dynamiczne i mapuje sie do id uzytego w metodzie
+        [HttpPatch("/api/product/{id}")]
+        public ActionResult ArchiveProduct(int id)
+        {
+            _logger.LogInformation("Archiving a product");
+            var archiveResult = _productService.ArchiveProduct(id);
+            return Ok(archiveResult);
         }
     }
 }
