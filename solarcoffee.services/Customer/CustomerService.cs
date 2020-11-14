@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace solarcoffee.services.Customer
 {
-    class CustomerService : ICustomerService
+    public class CustomerService : ICustomerService
     {
         private readonly solarDbContext _db;
 

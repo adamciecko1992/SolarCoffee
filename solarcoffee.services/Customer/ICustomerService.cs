@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace solarcoffee.services.Customer
 {
-    interface ICustomerService
+   public interface ICustomerService
     {
         List<data.models.Customer> GetAllCustomers();
         ServiceResponse<data.models.Customer> CreateCustomer(data.models.Customer customer);

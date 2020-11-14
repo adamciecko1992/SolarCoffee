@@ -9,7 +9,7 @@ using solarcoffee.services.Inventory;
 
 namespace solarcoffee.services.Order
 {
-    class OrderService : IOrderService
+   public class OrderService : IOrderService
     {
         private readonly solarDbContext _db;
         private readonly IProductService _productService;
@@ -27,15 +27,40 @@ namespace solarcoffee.services.Order
             _productService = productService;
         }
 
-        public ServiceResponse<bool> GenerateInvoiceForOrder(SalesOrder order)
+        /// <summary>
+        /// Generates Invoidce for particular order and updates Database in terms of quantity of a given product in inventory
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public ServiceResponse<bool> GenerateOpenOrder(SalesOrder order)
         {
            foreach(var item  in order.SolarOrderedItems)
             {
                 item.Product = _productService.GetProductById(item.Product.Id);
-                item.Quantity = item.Quantity;
                 var inventoryId = _inventoryService.GetByPdouctId(item.Product.Id).Id;
                 _inventoryService.UpdateUnitAvailable(inventoryId, -item.Quantity);
 
+            }
+            try {
+                _db.SalesOrders.Add(order);
+                _db.SaveChanges();
+                return new ServiceResponse<bool>
+                {
+                    Data = true,
+                    IsSuccess = true,
+                    Time = DateTime.UtcNow,
+                    Message = "Successfully generated invoice"
+                };
+                 
+                }
+            catch {
+                return new ServiceResponse<bool>
+                {
+                    Data = false,
+                    IsSuccess = false,
+                    Time = DateTime.UtcNow,
+                    Message = "Error during invoice generation"
+                };
             }
         }
 
@@ -49,9 +74,41 @@ namespace solarcoffee.services.Order
                 .ToList();
         }
 
+        /// <summary>
+        /// Marks an open sales order as paid
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public ServiceResponse<bool> MarkFullfilled(int id)
         {
-            throw new NotImplementedException();
+            var order = _db.SalesOrders.Find(id);
+            order.UpdatedOn = DateTime.UtcNow;
+            order.IsPayed = true;
+
+            try
+            {
+                //entity framework znajdzie order po obiekcie ktory przesylamy do update i wprowadzi w nim zmiany
+                _db.SalesOrders.Update(order);
+                _db.SaveChanges();
+                return new ServiceResponse<bool>
+                {
+                    IsSuccess = true,
+                    Data = true,
+                    Message = "Order closed, invoice paid in full",
+                    Time = DateTime.UtcNow
+                };
+
+            }
+            catch(Exception e)
+            {
+                return new ServiceResponse<bool>
+                {
+                    IsSuccess = false,
+                    Data = false,
+                    Message = e.StackTrace,
+                    Time = DateTime.UtcNow
+                };
+            }
         }
     }
 }

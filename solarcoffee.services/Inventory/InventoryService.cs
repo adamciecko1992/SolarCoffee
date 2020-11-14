@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace solarcoffee.services.Inventory
 {
-    class InventoryService : IInventoryService
+   public class InventoryService : IInventoryService
     {
         private readonly solarDbContext _db;
         private readonly ILogger<InventoryService> _logger;

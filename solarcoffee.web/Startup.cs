@@ -17,6 +17,8 @@ using solarcoffee.services;
 using solarcoffee.services.Product;
 using solarcoffee.services.Customer;
 using solarcoffee.services.Inventory;
+using solarcoffee.services.Order;
+
 
 
 
@@ -51,8 +53,9 @@ namespace solarcoffee.web
             //gruba usluge to dobrze by bylo stworzyc jedna instancje i wykorzystywac ja wielokrotnie, ale moze to prowadzic,
             //do nieoczekiwanych zachowan
             services.AddTransient<IProductService, ProductService>();
-            services.AddTransient<IInventtoryService, InventoryService>();
+            services.AddTransient<IInventoryService, InventoryService>();
             services.AddTransient<ICustomerService, CustomerService>();
+            services.AddTransient<IOrderService, OrderService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
