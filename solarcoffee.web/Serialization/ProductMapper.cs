@@ -10,20 +10,20 @@ namespace solarcoffee.web.Serialization
 /// dlatego kazdy model ktory dostajemy z daty musimy przemielic na taki model ktory bedzie nam potrzebny dla 
 /// naszego API
 /// </summary>
-    public class ProductMapper { 
-    
-        public static ProductModel SerializeProductModel(data.models.Product productModel)
+    public static class ProductMapper {
+
+        public static ProductModel SerializeProductModel(data.models.Product product)
         {
             return new ProductModel
             {
-                Id = productModel.Id,
-                CreatedOn = productModel.CreatedOn,
-                UpdatedOn = productModel.UpdatedOn,
-                Name = productModel.Name,
-                Description = productModel.Description,
-                Price = productModel.Price,
-                IsArchived = productModel.IsArchived,
-                IsTaxable = productModel.IsTaxable
+                Id = product.Id,
+                CreatedOn = product.CreatedOn,
+                UpdatedOn = product.CreatedOn,
+                Price = product.Price,
+                Name = product.Name,
+                Description = product.Description,
+                IsTaxable = product.IsTaxable,
+                IsArchived = product.IsArchived
             };
         }
         //odwrocone
@@ -33,15 +33,14 @@ namespace solarcoffee.web.Serialization
             {
                 Id = product.Id,
                 CreatedOn = product.CreatedOn,
-                UpdatedOn = product.UpdatedOn,
+                UpdatedOn = product.CreatedOn,
+                Price = product.Price,
                 Name = product.Name,
                 Description = product.Description,
-                Price = product.Price,
-                IsArchived = product.IsArchived,
-                IsTaxable = product.IsTaxable
+                IsTaxable = product.IsTaxable,
+                IsArchived = product.IsArchived
             };
         }
-
 
     }
 }

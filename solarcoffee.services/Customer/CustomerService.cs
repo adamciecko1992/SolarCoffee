@@ -61,6 +61,7 @@ namespace solarcoffee.services.Customer
                 };
             }
             try {
+                //remove to metoda wbudowana, nie wysylamy id tylko caly obiekt ktory chcemy usunac z danej tabeli (rzad)
                 _db.Customers.Remove(customer);
                 _db.SaveChanges();
                 return new ServiceResponse<bool>
@@ -89,6 +90,7 @@ namespace solarcoffee.services.Customer
                  //żeby EntityFramework zwrocił również model w modelu trzeba go zamieścić
                  //metodą Include
                  .Include((cutomer) => cutomer.PrimaryAdress)
+                 //posortuj alfabetycznie nazwiskami
                  .OrderBy((customer) => customer.LastName)
                  .ToList();
         }

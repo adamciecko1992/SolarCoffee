@@ -3,6 +3,7 @@ using solarcoffee.services.Order;
 using solarcoffee.services.Customer;
 using Microsoft.Extensions.Logging;
 using solarcoffee.web.ViewModels;
+using solarcoffee.web.Serialization;
 
 namespace solarcoffee.web.Controllers
 {
@@ -23,8 +24,9 @@ namespace solarcoffee.web.Controllers
         //[FromBody] to decorator który zaznacza ze tresc ma byc wyciagnieta z body requesta, poki ma odpowiednia strukture bedzie smigac
         public ActionResult GenerateNewOrder([FromBody] InvoiceModel invoice) {
             _logger.LogInformation("Generating Invoice");
-            var order = OrderMapper.SerializeInvoiceToOrder(invoice);
+            var order = OrderMapper.SerializeInvoiceToOrder(invoice); //sales order data model
             order.Customer = _customerService.GetById(invoice.CustomerId);
+            _orderService.GenerateOpenOrder(order);
             return Ok();
         }
     }
