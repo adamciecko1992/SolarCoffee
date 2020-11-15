@@ -61,7 +61,7 @@ namespace solarcoffee.services.Customer
                 };
             }
             try {
-                //remove to metoda wbudowana, nie wysylamy id tylko caly obiekt ktory chcemy usunac z danej tabeli (rzad)
+                //remove to metoda wbudowana w entityFramework, nie wysylamy id tylko caly obiekt ktory chcemy usunac z danej tabeli (rzad)
                 _db.Customers.Remove(customer);
                 _db.SaveChanges();
                 return new ServiceResponse<bool>

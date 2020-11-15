@@ -16,27 +16,14 @@ namespace solarcoffee.web.Serialization
         /// <returns></returns>
         public static CustomerModel SerializeCustomer(Customer customer)
         {
-            var adress = new CustomerAdressModel
-            {
-                Id = customer.Id,
-                CreatedOn = customer.CreatedOn,
-                UpdatedOn = customer.UpdatedOn,
-               AdressLine1 =customer.PrimaryAdress.AdressLine1,
-                 
-               AdressLine2 = customer.PrimaryAdress.AdressLine2,
-               PostalCode = customer.PrimaryAdress.PostalCode,
-               State = customer.PrimaryAdress.State,
-            };
-
-
-            return new CustomerModel
+                  return new CustomerModel
             {
                 Id = customer.Id,
                 CreatedOn = customer.CreatedOn,
                 UpdatedOn = customer.UpdatedOn,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
-                PrimaryAdress = adress,
+                PrimaryAdress = MapCustomerAdress(customer.PrimaryAdress),
             };
         }
 
@@ -49,39 +36,59 @@ namespace solarcoffee.web.Serialization
         /// <returns></returns>
         public static Customer SerializeCustomer(CustomerModel customer)
         {
-            var adress = new CustomerAdress
-            {
-                Id = customer.Id,
-                CreatedOn = customer.CreatedOn,
-                UpdatedOn = customer.UpdatedOn,
-                AdressLine1 = customer.PrimaryAdress.AdressLine1,
-                AdressLine2 = customer.PrimaryAdress.AdressLine2,
-                PostalCode = customer.PrimaryAdress.PostalCode,
-                State = customer.PrimaryAdress.State,
-                
-            };
+       
             return new Customer
             {
                 CreatedOn = customer.CreatedOn,
                 UpdatedOn = customer.UpdatedOn,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
-                PrimaryAdress = adress,
+                PrimaryAdress = MapCustomerAdress(customer.PrimaryAdress),
             };
         }
 
 
-       
-       
-        
+
+
 
         /// <summary>
         /// Maps a CustomerAddress data model to a CustomerAddressModel view model
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
+        public static CustomerAdressModel MapCustomerAdress(CustomerAdress adress)
+        {
+            return new CustomerAdressModel
+            {
+                Id = adress.Id,
+                AdressLine1 = adress.AdressLine1,
+                AdressLine2 = adress.AdressLine2,
+                State = adress.State,
+                PostalCode = adress.PostalCode,
+                CreatedOn = DateTime.UtcNow,
+                UpdatedOn = DateTime.UtcNow,
+            };
+        }
+
+        /// <summary>
+        /// Maps a CustomerAddressModel view model to a CustomerAddress data model
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public static CustomerAdress MapCustomerAdress(CustomerAdressModel adress)
+        {
+            return new CustomerAdress
+            {
+                Id = adress.Id,
+                CreatedOn = adress.CreatedOn,
+                UpdatedOn = adress.UpdatedOn,
+                AdressLine1 = adress.AdressLine1,
+                AdressLine2 = adress.AdressLine2,
+                PostalCode = adress.PostalCode,
+                State = adress.State,
+            };
+        }
 
 
-      
     }
 }
