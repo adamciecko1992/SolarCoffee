@@ -14,12 +14,12 @@ namespace solarcoffee.web.Controllers
     [ApiController]
     public class InventoryController : ControllerBase
     {
-        private readonly IInventoryService _inventory;
+        private readonly IInventoryService _inventoryService;
         private ILogger<InventoryController> _logger;
 
         public InventoryController(ILogger<InventoryController> logger, IInventoryService inventoryservice)
         {
-            _inventory = inventoryservice;
+            _inventoryService = inventoryservice;
             _logger = logger;
         }
 
@@ -27,17 +27,16 @@ namespace solarcoffee.web.Controllers
         public ActionResult GetInvenotry()
         {
             _logger.LogInformation("Getting Inventory");
-            var inventory = _inventory.GetCurrentInventory()
-                .Select((inventoryItem) => new ProductInventoryModel
-                {
-                   Id = inventoryItem.Id,
-                   IdealQuantity = inventoryItem.IdealQuantity,
-                   IsArchived = inventoryItem.IsArchived,
-                   QuantityOnHand = inventoryItem.QuantityOnHand,
-                   Product =ProductMapper.SerializeProductModel( inventoryItem.Product), 
-                
-                }).OrderBy((inv) => inv.Product.Name)
-                .ToList();
+            var inventory = _inventoryService.GetCurrentInventory()
+                 .Select(pi => new ProductInventoryModel
+                 {
+                     Id = pi.Id,
+                     Product = ProductMapper.SerializeProductModel(pi.Product),
+                     IdealQuantity = pi.IdealQuantity,
+                     QuantityOnHand = pi.QuantityOnHand
+                 })
+                 .OrderBy(inv => inv.Product.Name)
+                 .ToList();
 
             return Ok(inventory);
         }
@@ -45,10 +44,14 @@ namespace solarcoffee.web.Controllers
         [HttpPatch("/api/inventory")]
         public ActionResult UpdateInventory([FromBody] ShipmentModel shipment)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             _logger.LogInformation("Inventory is getting updated");
             var id = shipment.IdProduct;
             var adjustment = shipment.ProductAdjustment;
-            var inventory = _inventory.UpdateUnitAvailable(id, adjustment);
+            var inventory = _inventoryService.UpdateUnitsAvailable(id, adjustment);
             return Ok(inventory);
         }
 

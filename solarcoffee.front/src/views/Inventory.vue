@@ -16,20 +16,26 @@
       </tr>
       <tr v-for="item in inventory" :key="item.id">
         <td>{{ item.product.name }}</td>
-        <td>{{ item.quantityOnHand }}</td>
+        <td :class="`${getColors(item.quantityOnHand, item.idealQuantity)}`">
+          {{ item.quantityOnHand }}
+        </td>
         <td>{{ parsePrice(item.product.price) }}</td>
         <td>
           <span v-if="item.product.isTaxable">Yes</span>
           <span v-else>No</span>
         </td>
-        <td><solar-button isFullWidth>Delete</solar-button></td>
+        <td>
+          <solar-button isFullWidth @click="archiveProduct(item.product.id)"
+            >Delete</solar-button
+          >
+        </td>
       </tr>
     </table>
 
     <new-product-modal
       v-if="newProductShown"
       @close="closeModals"
-      @save-product="saveProduct"
+      @save-product="saveNewProduct"
     ></new-product-modal>
     <shipment-modal
       v-if="shipmentShown"
@@ -47,6 +53,9 @@ import SolarButton from "../components/SolarButton.vue";
 import newProductModal from "../components/modals/NewProductModal.vue";
 import shipmentModal from "../components/modals/ShipmentModal.vue";
 import { IShipment } from "@/types/Shipment";
+import InventoryService from "../services/Inventory-service";
+import ProductService from "../services/product-service";
+
 export default defineComponent({
   name: "Inventory",
   components: {
@@ -58,24 +67,18 @@ export default defineComponent({
   setup() {
     const newProductShown = ref(false);
     const shipmentShown = ref(false);
+    const myInventoryService = new InventoryService();
+    const myProductService = new ProductService();
+    const inventory = ref<IProductInventory[]>([]);
 
-    const inventory = ref<IProductInventory[]>([
-      {
-        id: 1,
-        quantityOnHand: 10,
-        idealQuantity: 50,
-        product: {
-          id: 1,
-          name: "darkCoffe",
-          createdOn: new Date(),
-          updatedOn: new Date(),
-          description: "example description",
-          price: 10,
-          isTaxable: false,
-          isArchived: true,
-        },
-      },
-    ]);
+    const fetchData = async () => {
+      const response = await myInventoryService.getInventory();
+      inventory.value.length = 0;
+      response.forEach((invItem: IProductInventory) => {
+        inventory.value.push(invItem);
+      });
+    };
+
     const parsePrice = (price: number) => {
       return price.toString() + "$";
     };
@@ -92,13 +95,34 @@ export default defineComponent({
       shipmentShown.value = false;
     };
 
-    const saveShipment = (shipment: IShipment) => {
-      console.log(shipment);
+    const saveShipment = async (shipment: IShipment) => {
+      await myInventoryService.updateInventoryQuantity(shipment);
+      showShipment();
+      await fetchData();
     };
 
-    const saveProduct = (product: IProduct) => {
-      console.log(product);
+    const archiveProduct = async (id: number) => {
+      await myProductService.archiveProduct(id);
+      await fetchData();
     };
+
+    const saveNewProduct = async (product: IProduct) => {
+      myProductService.saveNewProduct(product);
+      newProductShown.value = false;
+    };
+
+    const getColors = (
+      quantityOnHand: number,
+      idealQuantity: number
+    ): string => {
+      if (quantityOnHand <= 0) {
+        return "red";
+      } else if (Math.abs(idealQuantity - quantityOnHand) < 5) {
+        return "yellow";
+      }
+      return "green";
+    };
+    fetchData();
 
     return {
       inventory,
@@ -108,8 +132,10 @@ export default defineComponent({
       shipmentShown,
       showShipment,
       closeModals,
-      saveProduct,
+      saveNewProduct,
       saveShipment,
+      archiveProduct,
+      getColors,
     };
   },
 });
@@ -117,31 +143,27 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "../scss/global.scss";
-.table {
-  width: 100%;
-  max-width: 100%;
-  margin-bottom: 2rem;
-  border-collapse: collapse;
 
-  tr {
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.3s;
-
-    &:hover {
-      background-color: #f5f5f5;
-      transition: background-color 0.3s;
-    }
-  }
-
-  td {
-    padding: 1.2rem;
-  }
-
-  th {
-    background-color: #fafafa;
-    padding: 1.2rem;
-    border-bottom: 2px solid $solar-blue;
-  }
+.green {
+  font-weight: bold;
+  color: $solar-green;
+}
+.yellow {
+  font-weight: bold;
+  color: $solar-yellow;
+}
+.red {
+  font-weight: bold;
+  color: $solar-red;
+}
+.inventory-actions {
+  display: flex;
+  margin-bottom: 0.8rem;
+}
+.product-archive {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: $solar-red;
 }
 </style>

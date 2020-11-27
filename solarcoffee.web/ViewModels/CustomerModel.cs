@@ -14,6 +14,8 @@ namespace solarcoffee.web.ViewModels
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public CustomerAdressModel PrimaryAdress { get; set; }
+
+     
     }
 
     public class CustomerAdressModel

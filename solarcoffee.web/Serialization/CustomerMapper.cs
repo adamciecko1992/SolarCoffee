@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using solarcoffee.data.models;
+﻿using solarcoffee.data.models;
 using solarcoffee.web.ViewModels;
+using System;
 
 namespace solarcoffee.web.Serialization
 {
@@ -16,7 +13,7 @@ namespace solarcoffee.web.Serialization
         /// <returns></returns>
         public static CustomerModel SerializeCustomer(Customer customer)
         {
-                  return new CustomerModel
+            return new CustomerModel
             {
                 Id = customer.Id,
                 CreatedOn = customer.CreatedOn,
@@ -27,7 +24,7 @@ namespace solarcoffee.web.Serialization
             };
         }
 
-        
+
 
         /// <summary>
         /// Serializes a CustomerModel view model into a Customer data model
@@ -36,7 +33,7 @@ namespace solarcoffee.web.Serialization
         /// <returns></returns>
         public static Customer SerializeCustomer(CustomerModel customer)
         {
-       
+
             return new Customer
             {
                 CreatedOn = customer.CreatedOn,
@@ -67,6 +64,7 @@ namespace solarcoffee.web.Serialization
                 PostalCode = adress.PostalCode,
                 CreatedOn = DateTime.UtcNow,
                 UpdatedOn = DateTime.UtcNow,
+
             };
         }
 

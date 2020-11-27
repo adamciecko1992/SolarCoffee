@@ -97,10 +97,13 @@ namespace solarcoffee.services.Customer
 
         public data.models.Customer GetById(int id)
         {
-           //mozna przerobic na zwracanie serviceResponse
-           //FirstOrDefault zwraca pierwszy match lub defult dla typu tutaj null
-           //Firs zwraca pierwszy match a jak nie to wywala exception null
-                return _db.Customers.Find(id);
+            //mozna przerobic na zwracanie serviceResponse
+            //FirstOrDefault zwraca pierwszy match lub defult dla typu tutaj null
+            //Firs zwraca pierwszy match a jak nie to wywala exception null
+            return _db.Customers
+            .Include((c) => c.PrimaryAdress)
+            .ToList()
+            .Find(c=>c.Id==id);
 
             
         

@@ -43,10 +43,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, reactive } from "vue";
 import SolarButton from "@/components/SolarButton.vue";
 import SolarModal from "@/components/modals/SolarModal.vue";
-import { IProduct } from "@/types/Product";
+// import { IProduct } from "@/types/Product";
 
 export default defineComponent({
   components: {
@@ -56,7 +56,7 @@ export default defineComponent({
   emits: ["save-product", "close"],
 
   setup(_, ctx) {
-    const newProduct = ref<IProduct>({
+    const newProduct = reactive({
       createdOn: new Date(),
       updatedOn: new Date(),
       id: 0,
@@ -72,6 +72,7 @@ export default defineComponent({
     function save() {
       ctx.emit("save-product", newProduct);
     }
+
     return { save, close, newProduct };
   },
 });

@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="C:\Users\adamc\.nuget\packages\nlog.config\4.7.5\contentFiles\any\any\NLog.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.7.5" />
+    <PackageReference Include="NLog.Config" Version="4.7.5" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\solarcoffee.data\solarcoffee.data.csproj" />
   </ItemGroup>
 

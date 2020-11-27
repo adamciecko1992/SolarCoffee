@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using solarcoffee.services.Product;
-
+using solarcoffee.web.ViewModels;
 using solarcoffee.web.Serialization;
 
 
@@ -29,6 +29,7 @@ namespace solarcoffee.web.Controllers
         //Action result to jest to co zwraca nasz controller, moze byc json, albo view albo inne
         [HttpGet("/api/product")] //po requescie do tej sciezki wydary sie metoda
         public ActionResult GetProduct() {
+ 
             _logger.LogInformation("gettin all products");
             var products =  _productService.GetAllProducts();
             //jak map w JS
@@ -40,10 +41,30 @@ namespace solarcoffee.web.Controllers
         [HttpPatch("/api/product/{id}")]
         public ActionResult ArchiveProduct(int id)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             _logger.LogInformation("Archiving a product");
             var archiveResult = _productService.ArchiveProduct(id);
             return Ok(archiveResult);
         }
+
+        [HttpPost("/api/product")]
+        public ActionResult SaveProduct([FromBody] ProductModel newProduct)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            _logger.LogInformation("Saving new product");
+            var serializedProduct = ProductMapper.SerializeProductModel(newProduct);
+            _productService.CreateProduct(serializedProduct);
+            return Ok(newProduct);
+        }
+
+
+        
     }
 }
 

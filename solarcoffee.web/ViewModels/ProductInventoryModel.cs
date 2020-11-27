@@ -12,6 +12,5 @@ namespace solarcoffee.web.ViewModels
         public int QuantityOnHand { get; set; }
         public int IdealQuantity { get; set; }
         public ProductModel Product { get; set; }
-        public bool IsArchived { get; set; }
     }
 }

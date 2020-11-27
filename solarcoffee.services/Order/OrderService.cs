@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using solarcoffee.services.Product;
 using solarcoffee.services.Inventory;
 
+
 namespace solarcoffee.services.Order
 {
    public class OrderService : IOrderService
@@ -19,7 +20,7 @@ namespace solarcoffee.services.Order
         public OrderService(
             solarDbContext dbContext,
             IProductService productService,
-            IInventoryService inventoryService
+          IInventoryService inventoryService
             )
         {
             _db = dbContext;
@@ -37,11 +38,12 @@ namespace solarcoffee.services.Order
            foreach(var item  in order.SolarOrderedItems)
             {
                 item.Product = _productService.GetProductById(item.Product.Id);
-                var inventoryId = _inventoryService.GetByPdouctId(item.Product.Id).Id;
-                _inventoryService.UpdateUnitAvailable(inventoryId, -item.Quantity);
+
+                var inventoryId = _inventoryService.GetByProductId(item.Product.Id);
+                _inventoryService.UpdateUnitsAvailable(inventoryId.Id, -item.Quantity);
 
             }
-            try {
+           
                 _db.SalesOrders.Add(order);
                 _db.SaveChanges();
                 return new ServiceResponse<bool>
@@ -52,16 +54,9 @@ namespace solarcoffee.services.Order
                     Message = "Successfully generated invoice"
                 };
                  
-                }
-            catch {
-                return new ServiceResponse<bool>
-                {
-                    Data = false,
-                    IsSuccess = false,
-                    Time = DateTime.UtcNow,
-                    Message = "Error during invoice generation"
-                };
-            }
+                
+          
+              
         }
 
         public List<SalesOrder> GetOrders()
@@ -85,8 +80,7 @@ namespace solarcoffee.services.Order
             order.UpdatedOn = DateTime.UtcNow;
             order.IsPayed = true;
 
-            try
-            {
+            
                 //entity framework znajdzie order po obiekcie ktory przesylamy do update i wprowadzi w nim zmiany
                 _db.SalesOrders.Update(order);
                 _db.SaveChanges();
@@ -98,17 +92,8 @@ namespace solarcoffee.services.Order
                     Time = DateTime.UtcNow
                 };
 
-            }
-            catch(Exception e)
-            {
-                return new ServiceResponse<bool>
-                {
-                    IsSuccess = false,
-                    Data = false,
-                    Message = e.StackTrace,
-                    Time = DateTime.UtcNow
-                };
-            }
+            
+           
         }
     }
 }

@@ -324,9 +324,6 @@ namespace solarcoffee.data.Migrations
                     b.Property<int>("IdealQuantity")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean");
-
                     b.Property<int?>("ProductId")
                         .HasColumnType("integer");
 
@@ -353,7 +350,7 @@ namespace solarcoffee.data.Migrations
                     b.Property<int?>("ProductId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("QuantityOnHande")
+                    b.Property<int>("QuantityOnHand")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("SnapshotTime")
@@ -503,7 +500,7 @@ namespace solarcoffee.data.Migrations
                         .HasForeignKey("ProductId");
 
                     b.HasOne("solarcoffee.data.models.SalesOrder", null)
-                        .WithMany("SolarOrderedItem")
+                        .WithMany("SolarOrderedItems")
                         .HasForeignKey("SalesOrderId");
                 });
 #pragma warning restore 612, 618

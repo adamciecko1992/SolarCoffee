@@ -1,4 +1,4 @@
 export interface IShipment{
-    productId:number,
+    idProduct:number,
     adjustment:number
 }

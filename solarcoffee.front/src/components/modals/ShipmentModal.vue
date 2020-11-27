@@ -10,7 +10,7 @@
         </option>
       </select>
       <label for="qtyRecived">Quantity Received:</label>
-      <input type="number" id="qtyRecived" v-model="qtyRecived" />
+      <input type="number" id="qtyRecived" v-model.number="qtyRecived" />
     </template>
     <template #footer>
       <solar-button type="button" @click="save" aria-label="save new shipment">
@@ -28,7 +28,7 @@ import { defineComponent, ref } from "vue";
 import solarModal from "./SolarModal.vue";
 import solarButton from "../SolarButton.vue";
 import { IProductInventory, IProduct } from "@/types/Product";
-import { IShipment } from "@/types/Shipment";
+// import { IShipment } from "@/types/Shipment";
 
 export default defineComponent({
   props: {
@@ -40,7 +40,6 @@ export default defineComponent({
   },
   emits: ["save-shipment", "close"],
   setup(props, ctx) {
-    console.log(props.inventory);
     const qtyRecived = ref(0);
     const selectedProduct = ref<IProduct>({
       createdOn: new Date(),
@@ -52,15 +51,16 @@ export default defineComponent({
       price: 0,
       isArchived: false,
     });
+
     const close = () => {
       ctx.emit("close");
     };
     const save = () => {
       const shipment = {
-        productId: selectedProduct.value.id,
-        adjustment: qtyRecived.value,
-      } as IShipment;
-
+        idProduct: selectedProduct.value.id,
+        productAdjustment: qtyRecived.value,
+      };
+      console.log(shipment);
       ctx.emit("save-shipment", shipment);
     };
     return { selectedProduct, qtyRecived: qtyRecived, close, save };
