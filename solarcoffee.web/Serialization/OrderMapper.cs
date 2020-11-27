@@ -40,7 +40,7 @@ namespace solarcoffee.web.Serialization
                     CreatedOn = order.CreatedOn,
                     UpdatedOn = order.UpdatedOn,
                     Customer = CustomerMapper.SerializeCustomer(order.Customer),
-                    IsPayed = order.IsPayed
+                    IsPayed = order.IsPaid
 
 
                 }).ToList();

@@ -10,6 +10,6 @@ export default class InvoiceService {
     const now = new Date();
     invoice.createdOn = now;
     invoice.updatedOn = now;
-    return axios.post(`${this.apiUrl}/new`, invoice);
+    return axios.post(`${this.apiUrl}`, invoice);
   }
 }

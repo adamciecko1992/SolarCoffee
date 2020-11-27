@@ -13,6 +13,6 @@ namespace solarcoffee.data.models
         public DateTime UpdatedOn { get; set; }
         public Customer Customer { get; set; }
         public List<SalesOrderItem> SolarOrderedItems {get;set;}
-        public bool IsPayed { get; set; }
+        public bool IsPaid { get; set; }
     }
 }

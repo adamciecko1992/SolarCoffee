@@ -52,7 +52,7 @@ import { IProduct, IProductInventory } from "../types/Product";
 import SolarButton from "../components/SolarButton.vue";
 import newProductModal from "../components/modals/NewProductModal.vue";
 import shipmentModal from "../components/modals/ShipmentModal.vue";
-import { IShipment } from "@/types/Shipment";
+import { IShipment } from "../types/Shipment";
 import InventoryService from "../services/Inventory-service";
 import ProductService from "../services/product-service";
 

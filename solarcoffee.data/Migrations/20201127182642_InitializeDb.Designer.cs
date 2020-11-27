@@ -10,8 +10,8 @@ using solarcoffee.data;
 namespace solarcoffee.data.Migrations
 {
     [DbContext(typeof(solarDbContext))]
-    [Migration("20201125002829_patchingUpSnapshot")]
-    partial class patchingUpSnapshot
+    [Migration("20201127182642_InitializeDb")]
+    partial class InitializeDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

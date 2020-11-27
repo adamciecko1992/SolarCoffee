@@ -81,7 +81,7 @@
       <solar-button @click="submitInvoice">Submit Invoice</solar-button>
       <hr />
 
-      <div class="invoice-step-detail" id="invoice" ref="invoice">
+      <div class="invoice-step-detail" id="invoice" ref="invoiceRef">
         <div class="invoice-logo">
           <img
             id="imgLogo"
@@ -95,24 +95,26 @@
           <div class="invoice-order-list" v-if="lineItems.length">
             <div class="invoice-header">
               <h3>Invoice: {{ new Date() }}</h3>
-              <h3>
-                Customer:
-                {{
-                  selectedCustomer.firstName + " " + selectedCustomer.lastName
-                }}
-              </h3>
-              <h3>Address: {{ selectedCustomer.primaryAdress.adressLine1 }}</h3>
-              <h3 v-if="selectedCustomer.primaryAdress.adressLine2">
-                {{ selectedCustomer.primaryAdress.adressLine2 }}
-              </h3>
-              <h3>
-                {{ selectedCustomer.primaryAdress.city }},
-                {{ selectedCustomer.primaryAdress.state }},
-                {{ selectedCustomer.primaryAdress.postalCode }}
-              </h3>
-              <h3>
-                {{ selectedCustomer.primaryAdress.country }}
-              </h3>
+              <hr />
+              <section>
+                <h3>
+                  Customer:
+                  {{
+                    selectedCustomer.firstName + " " + selectedCustomer.lastName
+                  }}
+                </h3>
+                <h3>
+                  Address: {{ selectedCustomer.primaryAdress.adressLine1 }}
+                </h3>
+                <h3 v-if="selectedCustomer.primaryAdress.adressLine2">
+                  {{ selectedCustomer.primaryAdress.adressLine2 }}
+                </h3>
+                <h3>
+                  City:
+                  {{ selectedCustomer.primaryAdress.state }}, Postal Code
+                  {{ selectedCustomer.primaryAdress.postalCode }}
+                </h3>
+              </section>
             </div>
             <table class="table">
               <thead>
@@ -162,19 +164,24 @@
 </template>
 
 <script lang="ts">
-import CustomerService from "@/services/customer-service";
-import InventoryService from "@/services/Inventory-service";
-import InvoiceService from "@/services/invoice-service";
-import { ICustomer } from "@/types/Customer";
-import { IInvoice, ILineItem } from "@/types/Invoice";
-import { IProductInventory } from "@/types/Product";
+import CustomerService from "../services/customer-service";
+import InventoryService from "../services/Inventory-service";
+import InvoiceService from "../services/invoice-service";
+import { ICustomer } from "../types/Customer";
+import { IInvoice, ILineItem } from "../types/Invoice";
+import { IProductInventory } from "../types/Product";
 import { defineComponent, ref, reactive, computed, watch } from "vue";
 import SolarButton from "../components/SolarButton.vue";
+import jspdf from "jspdf";
+import html2canvas from "html2canvas";
+import { useRouter } from "vue-router";
+
 export default defineComponent({
   components: {
     SolarButton,
   },
   setup() {
+    const router = useRouter();
     //
     const inventory = ref<IProductInventory[]>([]);
     const lineItems = ref<ILineItem[]>([]);
@@ -197,7 +204,7 @@ export default defineComponent({
     const customers = ref<ICustomer[]>([]);
     const customerService = new CustomerService();
     const selectedCustomerId = ref<number>(0);
-    let selectedCustomer = reactive<ICustomer>({
+    const selectedCustomer = reactive<ICustomer>({
       id: 0,
       createdOn: new Date(),
       updatedOn: new Date(),
@@ -219,22 +226,25 @@ export default defineComponent({
       const selected = await customerService.getCustomerById(
         selectedCustomerId.value
       );
-      selectedCustomer = selected;
-      console.log(selectedCustomer);
+      Object.assign(selectedCustomer, selected);
     });
     //Invoice
     const invoiceStep = ref(1);
     const canGoNext = computed(() => {
-      console.log("changed");
       return invoiceStep.value === 3 || selectedCustomerId.value === 0
         ? false
         : true;
     });
     const canGoPrev = computed(() => {
-      console.log("changed");
       return invoiceStep.value === 1 ? false : true;
     });
-    const runningTotal = ref(0);
+
+    const runningTotal = computed(() => {
+      return lineItems.value.reduce(
+        (a, b) => a + b.product.price * b.quantity,
+        0
+      );
+    });
     function next() {
       invoiceStep.value++;
     }
@@ -250,16 +260,43 @@ export default defineComponent({
         quantity: newItem.value.quantity,
       };
       lineItems.value.push(lineItem);
-      runningTotal.value++;
     }
     function finalizeOrder() {
       invoiceStep.value = 3;
     }
-    function submitInvoice() {
-      console.log("start over");
+    //Invoice
+    const invoiceService = new InvoiceService();
+    const invoiceRef = ref<HTMLElement | null>(null);
+
+    function downloadPdf() {
+      const pdf = new jspdf("p", "pt", "a4", true);
+      const invoice = document.getElementById("invoice");
+      if (invoiceRef.value) {
+        const width = invoiceRef.value.clientWidth;
+        const height = invoiceRef.value.clientHeight;
+
+        if (invoice) {
+          html2canvas(invoice).then((canvas) => {
+            const image = canvas.toDataURL("image/png");
+            pdf.addImage(image, "PNG", 0, 0, width * 0.55, height * 0.55);
+            pdf.save("invoice");
+          });
+        }
+      }
     }
 
-    const invoiceService = new InvoiceService();
+    async function submitInvoice(): Promise<void> {
+      const invoice: IInvoice = {
+        customerId: selectedCustomerId.value,
+        lineItems: lineItems.value,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+      };
+      await invoiceService.makeNewInvoice(invoice);
+      downloadPdf();
+      router.push("/orders");
+    }
+
     const invoice = reactive({
       customerId: NaN,
       lineItems: [],
@@ -295,6 +332,7 @@ export default defineComponent({
       addLineItem,
       submitInvoice,
       finalizeOrder,
+      invoiceRef,
     };
   },
 });
@@ -307,6 +345,7 @@ export default defineComponent({
   width: 100%;
 }
 .invoice-step {
+  color: inherit;
 }
 .invoice-step-detail {
   margin: 1.2rem;

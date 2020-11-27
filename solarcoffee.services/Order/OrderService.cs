@@ -78,7 +78,7 @@ namespace solarcoffee.services.Order
         {
             var order = _db.SalesOrders.Find(id);
             order.UpdatedOn = DateTime.UtcNow;
-            order.IsPayed = true;
+            order.IsPaid = true;
 
             
                 //entity framework znajdzie order po obiekcie ktory przesylamy do update i wprowadzi w nim zmiany
