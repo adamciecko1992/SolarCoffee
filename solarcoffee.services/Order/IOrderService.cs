@@ -11,6 +11,6 @@ namespace solarcoffee.services.Order
     {
         List<SalesOrder> GetOrders();
         ServiceResponse<bool> GenerateOpenOrder(SalesOrder order);
-        ServiceResponse<bool> MarkFullfilled(int id);
+        ServiceResponse<SalesOrder> MarkFullfilled(int id);
     }
 }

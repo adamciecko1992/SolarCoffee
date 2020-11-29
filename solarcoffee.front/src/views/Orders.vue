@@ -62,6 +62,9 @@ export default defineComponent({
     }
     async function initialize() {
       orders.value = await orderService.getOrders();
+      orders.value.forEach((order) => {
+        console.log(order);
+      });
     }
 
     async function markComplete(orderId: number) {

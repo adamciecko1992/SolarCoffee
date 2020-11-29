@@ -1,5 +1,6 @@
 import { IProductInventory } from "@/types/Product";
 import { IShipment } from "@/types/Shipment";
+import { IInventoryTimeline} from "@/types/InventoryGraph";
 import axios from "axios";
 
 export default class InventoryService {
@@ -17,7 +18,9 @@ export default class InventoryService {
     return result.data;
   }
 
-  public async archiveProduct(){
-    console.log('blabla')
+
+    public async getSnapshotHistory(): Promise<IInventoryTimeline> {
+    const result: any = await axios.get(`${this.API_URL}/inventory/snapshot`);
+    return result.data;
   }
 }

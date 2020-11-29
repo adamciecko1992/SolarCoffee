@@ -43,6 +43,7 @@ namespace solarcoffee.services.Inventory
         /// <returns></returns>
         public ServiceResponse<ProductInventory> UpdateUnitsAvailable(int id, int adjustment)
         {
+
                 var now = DateTime.UtcNow;
                
                 var inventory = _db.ProductInventories
@@ -50,8 +51,17 @@ namespace solarcoffee.services.Inventory
                     .First(inv => inv.Product.Id == id);
 
                 inventory.QuantityOnHand += adjustment;
+            try
+            {
+                CreateSnapshot();
+            }
 
-               _db.SaveChanges();
+            catch (Exception e)
+            {
+                _logger.LogError("Error creating inventory snapshot.");
+                _logger.LogError(e.StackTrace);
+            }
+            _db.SaveChanges();
 
                 return new ServiceResponse<ProductInventory>
 

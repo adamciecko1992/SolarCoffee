@@ -74,7 +74,7 @@ namespace solarcoffee.services.Order
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public ServiceResponse<bool> MarkFullfilled(int id)
+        public ServiceResponse<SalesOrder> MarkFullfilled(int id)
         {
             var order = _db.SalesOrders.Find(id);
             order.UpdatedOn = DateTime.UtcNow;
@@ -84,10 +84,10 @@ namespace solarcoffee.services.Order
                 //entity framework znajdzie order po obiekcie ktory przesylamy do update i wprowadzi w nim zmiany
                 _db.SalesOrders.Update(order);
                 _db.SaveChanges();
-                return new ServiceResponse<bool>
+                return new ServiceResponse<SalesOrder>
                 {
                     IsSuccess = true,
-                    Data = true,
+                    Data = order,
                     Message = "Order closed, invoice paid in full",
                     Time = DateTime.UtcNow
                 };

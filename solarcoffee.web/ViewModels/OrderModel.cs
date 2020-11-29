@@ -12,6 +12,6 @@ namespace solarcoffee.web.ViewModels
         public DateTime UpdatedOn { get; set; }
         public CustomerModel Customer { get; set; }
         public List<SalesItemOrderModel> SolarOrderedItems { get; set; }
-        public bool IsPayed { get; set; }
+        public bool IsPaid { get; set; }
     }
 }

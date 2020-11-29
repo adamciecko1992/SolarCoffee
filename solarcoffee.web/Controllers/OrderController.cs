@@ -40,8 +40,8 @@ namespace solarcoffee.web.Controllers
         public ActionResult MarkOrderComplete(int id)
         {
             _logger.LogInformation($"Marking order complete {id}");
-            _orderService.MarkFullfilled(id);
-            return Ok();
+           var fullfilled = _orderService.MarkFullfilled(id);
+            return Ok(fullfilled);
         }
     }
 }
