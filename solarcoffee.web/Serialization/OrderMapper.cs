@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using solarcoffee.data.models;
 using solarcoffee.web.ViewModels;
 
@@ -22,7 +21,7 @@ namespace solarcoffee.web.Serialization
                 }).ToList() ;
             return new SalesOrder
             {
-                SolarOrderedItems = SalesOrderItems,
+                LineItems = SalesOrderItems,
                 CreatedOn = DateTime.UtcNow,
                 UpdatedOn = DateTime.UtcNow,
                 Id = invoice.Id,
@@ -36,7 +35,7 @@ namespace solarcoffee.web.Serialization
                 .Select((order) => new OrderModel
                 {
                     Id = order.Id,
-                    SolarOrderedItems = SerializeSalesOrderModel(order.SolarOrderedItems),
+                    LineItems = SerializeSalesOrderModel(order.LineItems),
                     CreatedOn = order.CreatedOn,
                     UpdatedOn = order.UpdatedOn,
                     Customer = CustomerMapper.SerializeCustomer(order.Customer),

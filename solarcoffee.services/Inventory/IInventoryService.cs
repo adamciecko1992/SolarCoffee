@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using solarcoffee.data.models;
 
 
 namespace solarcoffee.services.Inventory
 {
-    
-        public interface IInventoryService
+
+    public interface IInventoryService
         {
             public List<ProductInventory> GetCurrentInventory();
             public ServiceResponse<ProductInventory> UpdateUnitsAvailable(int id, int adjustment);

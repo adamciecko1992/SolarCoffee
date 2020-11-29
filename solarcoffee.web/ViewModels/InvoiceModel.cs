@@ -1,8 +1,5 @@
-﻿using solarcoffee.data.models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace solarcoffee.web.ViewModels
 {

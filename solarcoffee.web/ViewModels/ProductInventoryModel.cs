@@ -1,10 +1,4 @@
-﻿using System;
-using solarcoffee.web.ViewModels;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace solarcoffee.web.ViewModels
+﻿namespace solarcoffee.web.ViewModels
 {
     public class ProductInventoryModel
     {

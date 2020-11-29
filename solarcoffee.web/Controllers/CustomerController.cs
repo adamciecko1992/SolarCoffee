@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using solarcoffee.services.Customer;
 using solarcoffee.web.ViewModels;
-using solarcoffee.web.Serialization;
+using AutoMapper;
+using solarcoffee.data.models;
 
 namespace solarcoffee.web.Controllers
 {
@@ -15,12 +14,13 @@ namespace solarcoffee.web.Controllers
     {
         private ILogger<CustomerController> _logger;
         private readonly ICustomerService _customerService;
+        private readonly IMapper _mapper;
 
-        public CustomerController( ILogger<CustomerController> logger, ICustomerService customerService) 
+        public CustomerController( ILogger<CustomerController> logger, ICustomerService customerService, IMapper mapper) 
         {
             _logger = logger;
             _customerService = customerService;
-
+            _mapper = mapper;
         }
         [HttpPost("api/customer")]
         public ActionResult CreateCustomer([FromBody] CustomerModel customer)
@@ -37,8 +37,9 @@ namespace solarcoffee.web.Controllers
                 //dopisz do uzyskanego obiektu z body z requesta dateTimy
                 customer.CreatedOn = DateTime.UtcNow;
                 customer.UpdatedOn = DateTime.UtcNow;
-                //przerob otrzymanego cutomera z viewModelCustomera na dataModelCustomera
-                var customerData = CustomerMapper.SerializeCustomer(customer);
+             
+           
+                var customerData = _mapper.Map<Customer>(customer);
                 //stworz nowego customera za pomoca metody w servisie 
                 var newCustomer = _customerService.CreateCustomer(customerData);
                 //zwroc odpowiedz z servera 
@@ -51,16 +52,12 @@ namespace solarcoffee.web.Controllers
             _logger.LogInformation("Getting all customers");
             //pobierz dane wszystkich uzytkownikow jako modele data
             var customers = _customerService.GetAllCustomers();
-            var SerializedCustomers = customers.Select((customer) => new CustomerModel
-            {
-                FirstName = customer.FirstName,
-                LastName = customer.LastName,
-                Id = customer.Id,
-                CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.UtcNow,
-                PrimaryAdress = CustomerMapper.MapCustomerAdress(customer.PrimaryAdress)
-            }).OrderByDescending((customer) => customer.CreatedOn)
-           .ToList();
+
+            var SerializedCustomers = customers.Select((customer) => _mapper.Map<CustomerModel>(customer))
+                .OrderByDescending((customer) => customer.CreatedOn)
+                .ToList();
+
+         
             return Ok(SerializedCustomers);
         }
 

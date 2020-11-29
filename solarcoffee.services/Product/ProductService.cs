@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using solarcoffee.data;
 using solarcoffee.data.models;
 using solarcoffee.services.Product;
-
 
 namespace solarcoffee.services
 {
@@ -54,13 +51,13 @@ namespace solarcoffee.services
            
                 _db.Products.Add(ProvidedProduct);//add
                 var newInventory = new ProductInventory
-                { //dzieki entity mozemy przypisac w tym miejscu properties
+                {
                     Product = ProvidedProduct,
                     QuantityOnHand = 0,
                     IdealQuantity = 10
                 };
                 _db.ProductInventories.Add(newInventory);
-                _db.SaveChanges();//commit
+                _db.SaveChanges();
 
                 return new ServiceResponse<data.models.Product> { 
                 Message="Solved new product",
@@ -71,7 +68,7 @@ namespace solarcoffee.services
             
           
             
-            //dodaje produkt do 'kolejki' i 'scomituje' zmiane do bazy danych po db.SaveChanges()
+         
         }
         /// <summary>
         /// gets all products from db

@@ -17,6 +17,7 @@ using System;
 using System.IO;
 using solarcoffee.services.GlobalErrorHandler;
 using solarcoffee.services.GlobalErrorHandler.Extensions;
+using AutoMapper;
 
 namespace solarcoffee.web
 {
@@ -34,7 +35,7 @@ namespace solarcoffee.web
         public void ConfigureServices(IServiceCollection services)
         {
 
-
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddCors();
             services.AddControllers()
                 .AddNewtonsoftJson((opts) => opts.SerializerSettings.ContractResolver = new DefaultContractResolver

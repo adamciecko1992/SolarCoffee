@@ -51,7 +51,7 @@ export default defineComponent({
     const orders = ref<ISalesOrder[]>([]);
     function getTotal(order: ISalesOrder) {
       if (order) {
-        return order.solarOrderedItems.reduce(
+        return order.lineItems.reduce(
           (a, b) => a + b["product"]["price"] * b["quantity"],
           0
         );
@@ -62,9 +62,6 @@ export default defineComponent({
     }
     async function initialize() {
       orders.value = await orderService.getOrders();
-      orders.value.forEach((order) => {
-        console.log(order);
-      });
     }
 
     async function markComplete(orderId: number) {

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using solarcoffee.services.Product;
 using solarcoffee.web.ViewModels;
-using solarcoffee.web.Serialization;
-
+using AutoMapper;
+using solarcoffee.data.models;
 
 namespace solarcoffee.web.Controllers
 {
@@ -16,13 +13,15 @@ namespace solarcoffee.web.Controllers
     {
         private readonly ILogger<ProductController> _logger;
         private readonly IProductService _productService;
-        public ProductController(ILogger<ProductController> logger, IProductService productService)
+        private readonly IMapper _mapper;
+        public ProductController(ILogger<ProductController> logger, IProductService productService, IMapper mapper)
             //Injecting ProductController as ILogger
             //Injecting productService  - more details in startup and service.AddTransient()
             //nie trzeba tworzyc instancji kontrollerow framework robi to za nas 
         {
             _logger = logger;
             _productService = productService;
+            _mapper = mapper;
 
 
         }
@@ -32,8 +31,7 @@ namespace solarcoffee.web.Controllers
  
             _logger.LogInformation("gettin all products");
             var products =  _productService.GetAllProducts();
-            //jak map w JS
-            var productViewModels = products.Select((product) => ProductMapper.SerializeProductModel(product));
+            var productViewModels = products.Select((product) => _mapper.Map<ProductModel>(product));
             return Ok(productViewModels); //Ok to ActionResult, a w argumencie przyjmuje tresc ktora ma zwrocic
         }
 
@@ -58,7 +56,7 @@ namespace solarcoffee.web.Controllers
                 return BadRequest(ModelState);
             }
             _logger.LogInformation("Saving new product");
-            var serializedProduct = ProductMapper.SerializeProductModel(newProduct);
+             var serializedProduct = _mapper.Map<Product>(newProduct);
             _productService.CreateProduct(serializedProduct);
             return Ok(newProduct);
         }

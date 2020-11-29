@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using solarcoffee.data.models;
 
 namespace solarcoffee.services.Order
 {
-   public interface IOrderService
+    public interface IOrderService
     {
         List<SalesOrder> GetOrders();
         ServiceResponse<bool> GenerateOpenOrder(SalesOrder order);

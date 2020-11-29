@@ -35,7 +35,7 @@ namespace solarcoffee.services.Order
         /// <returns></returns>
         public ServiceResponse<bool> GenerateOpenOrder(SalesOrder order)
         {
-           foreach(var item  in order.SolarOrderedItems)
+           foreach(var item  in order.LineItems)
             {
                 item.Product = _productService.GetProductById(item.Product.Id);
 
@@ -64,7 +64,7 @@ namespace solarcoffee.services.Order
             return _db.SalesOrders
                 .Include(order => order.Customer)
                     .ThenInclude(customer=>customer.PrimaryAdress)
-                .Include(order => order.SolarOrderedItems)
+                .Include(order => order.LineItems)
                     .ThenInclude(order=>order.Product)
                 .ToList();
         }

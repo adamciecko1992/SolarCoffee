@@ -7,5 +7,5 @@ export interface ISalesOrder {
   updatedOn?: Date;
   customer: ICustomer;
   isPaid: boolean;
-  solarOrderedItems: ILineItem[];
+  lineItems: ILineItem[];
 }

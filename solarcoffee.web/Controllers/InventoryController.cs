@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using solarcoffee.services.Inventory;
 using solarcoffee.web.ViewModels;
-using solarcoffee.web.Serialization;
-
+using AutoMapper;
 
 namespace solarcoffee.web.Controllers
 {
@@ -16,29 +14,36 @@ namespace solarcoffee.web.Controllers
     {
         private readonly IInventoryService _inventoryService;
         private ILogger<InventoryController> _logger;
+        private IMapper _mapper;
 
-        public InventoryController(ILogger<InventoryController> logger, IInventoryService inventoryservice)
+        public InventoryController(ILogger<InventoryController> logger, IInventoryService inventoryservice, IMapper mapper)
         {
             _inventoryService = inventoryservice;
             _logger = logger;
+            _mapper = mapper;
         }
 
         [HttpGet("/api/inventory")]
         public ActionResult GetInvenotry()
         {
             _logger.LogInformation("Getting Inventory");
-            var inventory = _inventoryService.GetCurrentInventory()
-                 .Select(pi => new ProductInventoryModel
-                 {
-                     Id = pi.Id,
-                     Product = ProductMapper.SerializeProductModel(pi.Product),
-                     IdealQuantity = pi.IdealQuantity,
-                     QuantityOnHand = pi.QuantityOnHand
-                 })
-                 .OrderBy(inv => inv.Product.Name)
-                 .ToList();
+            //var inventory = _inventoryService.GetCurrentInventory()
+            //     .Select(pi => new ProductInventoryModel
+            //     {
+            //         Id = pi.Id,
+            //         Product = _mapper.Map<ProductModel>(pi.Product),
+            //         IdealQuantity = pi.IdealQuantity,
+            //         QuantityOnHand = pi.QuantityOnHand
+            //     })
+            //     .OrderBy(inv => inv.Product.Name)
+            //     .ToList();
 
-            return Ok(inventory);
+            var wholeInventory = _inventoryService.GetCurrentInventory();
+            var inventoryViewData = wholeInventory.Select((inv) => _mapper.Map<ProductInventoryModel>(inv))
+                .OrderBy(inv => inv.Product.Name)
+                .ToList();
+
+            return Ok(inventoryViewData);
         }
 
         [HttpPatch("/api/inventory")]
@@ -59,14 +64,7 @@ namespace solarcoffee.web.Controllers
         public ActionResult GetSnapshotHistory()
         {
 
-            // ReSharper disable once InvalidXmlDocComment
-            /**
-             * {
-             *     timeline: [1, 2, 3 .. n],
-             *     inventory: [{ id: 1, qty: [43, 21, 32 .. n ] }, { id: 2, qty: [43, 12, 43 .. n]}]
-             * }
-             */
-
+     
             _logger.LogInformation("Getting snapshot history");
 
             try

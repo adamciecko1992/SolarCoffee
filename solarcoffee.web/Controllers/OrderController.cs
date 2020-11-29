@@ -3,7 +3,10 @@ using solarcoffee.services.Order;
 using solarcoffee.services.Customer;
 using Microsoft.Extensions.Logging;
 using solarcoffee.web.ViewModels;
-using solarcoffee.web.Serialization;
+using AutoMapper;
+using solarcoffee.data.models;
+using System.Linq;
+
 
 namespace solarcoffee.web.Controllers
 {
@@ -13,18 +16,20 @@ namespace solarcoffee.web.Controllers
         private readonly ILogger<OrderController> _logger;
         private readonly IOrderService _orderService;
         private readonly ICustomerService _customerService;
+        private readonly IMapper _mapper;
 
-        public OrderController(ILogger<OrderController> logger, IOrderService orderService, ICustomerService customerService)
+        public OrderController(ILogger<OrderController> logger, IOrderService orderService, ICustomerService customerService, IMapper mapper)
         {
             _logger = logger;
             _orderService = orderService;
             _customerService = customerService;
+            _mapper = mapper;
         }
         [HttpPost("/api/invoice")]
         //[FromBody] to decorator który zaznacza ze tresc ma byc wyciagnieta z body requesta, poki ma odpowiednia strukture bedzie smigac
         public ActionResult GenerateNewOrder([FromBody] InvoiceModel invoice) {
             _logger.LogInformation("Generating Invoice");
-            var order = OrderMapper.SerializeInvoiceToOrder(invoice); //sales order data model
+            var order = _mapper.Map<SalesOrder>(invoice);
             order.Customer = _customerService.GetById(invoice.CustomerId);
             _orderService.GenerateOpenOrder(order);
             return Ok();
@@ -33,7 +38,8 @@ namespace solarcoffee.web.Controllers
         public ActionResult GetOrder()
         {
             var orders = _orderService.GetOrders();
-            var orderModels = OrderMapper.SerializeOrderToViewModels(orders);
+            var orderModels = orders.Select((order) => _mapper.Map<OrderModel>(order));
+                   
             return Ok(orderModels);
         }
         [HttpPatch("/api/order/complete/{id}")]
