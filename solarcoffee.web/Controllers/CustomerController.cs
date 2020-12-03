@@ -12,7 +12,7 @@ namespace solarcoffee.web.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private ILogger<CustomerController> _logger;
+        private readonly ILogger<CustomerController> _logger;
         private readonly ICustomerService _customerService;
         private readonly IMapper _mapper;
 
@@ -33,7 +33,6 @@ namespace solarcoffee.web.Controllers
             }
             else
             {
-                _logger.LogInformation("Creating Customer", customer.ToString());
                 //dopisz do uzyskanego obiektu z body z requesta dateTimy
                 customer.CreatedOn = DateTime.UtcNow;
                 customer.UpdatedOn = DateTime.UtcNow;

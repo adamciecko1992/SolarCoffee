@@ -31,8 +31,7 @@
           {{ customer.createdOn }}
         </td>
         <td>
-          <solar-button
-            @click="customer.id ? deleteCustomer(customer.id) : undefined"
+          <solar-button @click="deleteCustomer(customer.id)"
             >Delete</solar-button
           >
         </td>
@@ -49,9 +48,9 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { ICustomer } from "@/types/Customer.d.ts";
+import { ICustomer } from "../types/Customer";
 import SolarButton from "@/components/SolarButton.vue";
-import CustomerService from "@/services/customer-service";
+import CustomerService from "../services/customer-service";
 import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
 const customerService = new CustomerService();
 
@@ -67,6 +66,7 @@ export default defineComponent({
     };
     async function initialize() {
       customers.value = await customerService.getCustomers();
+      console.log(customers.value);
     }
     const closeModal = (): void => {
       isCustomerModalVisible.value = false;

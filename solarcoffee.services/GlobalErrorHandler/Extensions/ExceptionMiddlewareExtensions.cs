@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 
+
 namespace solarcoffee.services.GlobalErrorHandler.Extensions
 {
     public static class  ExceptionMiddlewareExtensions

@@ -18,7 +18,8 @@ namespace solarcoffee.services.Customer
 
         public ServiceResponse<data.models.Customer> CreateCustomer(data.models.Customer customer)
         {
-            try{
+            try
+            {
                 _db.Customers.Add(customer);
                 _db.SaveChanges();
                 return new ServiceResponse<data.models.Customer>
@@ -29,7 +30,8 @@ namespace solarcoffee.services.Customer
                     Data = customer
                 };
             }
-            catch(Exception e) {
+            catch (Exception e)
+            {
                 return new ServiceResponse<data.models.Customer>
                 {
                     IsSuccess = false,
@@ -44,8 +46,8 @@ namespace solarcoffee.services.Customer
 
         public ServiceResponse<bool> DeleteCustomer(int id)
         {
-           var customer = _db.Customers.Find(id);
-            var now = DateTime.UtcNow; 
+            var customer = _db.Customers.Find(id);
+            var now = DateTime.UtcNow;
             //Find nie przyjmuje cb tylko wartosc po ktorej ma znalezc wpis
             if (customer == null)
             {
@@ -58,7 +60,8 @@ namespace solarcoffee.services.Customer
 
                 };
             }
-            try {
+            try
+            {
                 //remove to metoda wbudowana w entityFramework, nie wysylamy id tylko caly obiekt ktory chcemy usunac z danej tabeli (rzad)
                 _db.Customers.Remove(customer);
                 _db.SaveChanges();
@@ -70,7 +73,10 @@ namespace solarcoffee.services.Customer
                     Data = true,
 
                 };
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
+
                 return new ServiceResponse<bool>
                 {
                     IsSuccess = false,
@@ -101,11 +107,11 @@ namespace solarcoffee.services.Customer
             return _db.Customers
             .Include((c) => c.PrimaryAdress)
             .ToList()
-            .Find(c=>c.Id==id);
+            .Find(c => c.Id == id);
 
-            
-        
-         
+
+
+
         }
     }
 }

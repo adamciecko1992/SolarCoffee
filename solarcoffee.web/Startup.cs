@@ -18,6 +18,9 @@ using System.IO;
 using solarcoffee.services.GlobalErrorHandler;
 using solarcoffee.services.GlobalErrorHandler.Extensions;
 using AutoMapper;
+using solarcoffee.services.ModelValidationOverrider;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace solarcoffee.web
 {
@@ -31,7 +34,6 @@ namespace solarcoffee.web
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -54,6 +56,8 @@ namespace solarcoffee.web
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "solarcoffee.web", Version = "v1" });
             });
+
+            services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CustomerModelValidator>());
             //za kazdym razem gdy bede potrzebowal IPorductService daj mi instancje ProductService
             //Injection in framework, zawsze daje nowa instancje kiedy jest potrzebny
             //Taki serrvice lifetime, uzywany dla statless services bo sa lekkie, ejsli mielibysmy jakas 
@@ -64,6 +68,7 @@ namespace solarcoffee.web
             services.AddTransient<IInventoryService, InventoryService>();
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IOrderService, OrderService>();
+            new ModelStateOverrider(services).Register();
 
 
 
