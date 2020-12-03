@@ -73,7 +73,7 @@
 import { defineComponent, reactive } from "vue";
 import SolarButton from "@/components/SolarButton.vue";
 import SolarModal from "@/components/modals/SolarModal.vue";
-import { ICustomer } from "@/types/Customer";
+import { ICustomer } from "../../types/Customer";
 
 export default defineComponent({
   name: "NewCustomerModal",

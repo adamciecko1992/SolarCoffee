@@ -57,6 +57,7 @@ export default defineComponent({
         );
       }
     }
+
     function getStatus(isPaid: boolean) {
       return isPaid ? "Paid in Full" : "Unpaid";
     }

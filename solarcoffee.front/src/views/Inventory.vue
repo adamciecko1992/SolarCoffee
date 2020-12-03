@@ -71,7 +71,7 @@ export default defineComponent({
     const myProductService = new ProductService();
     const inventory = ref<IProductInventory[]>([]);
 
-    const fetchData = async () => {
+    const initialize = async () => {
       const response = await myInventoryService.getInventory();
       inventory.value.length = 0;
       response.forEach((invItem: IProductInventory) => {
@@ -98,17 +98,18 @@ export default defineComponent({
     const saveShipment = async (shipment: IShipment) => {
       await myInventoryService.updateInventoryQuantity(shipment);
       showShipment();
-      await fetchData();
+      await initialize();
     };
 
     const archiveProduct = async (id: number) => {
       await myProductService.archiveProduct(id);
-      await fetchData();
+      await initialize();
     };
 
     const saveNewProduct = async (product: IProduct) => {
       myProductService.saveNewProduct(product);
       newProductShown.value = false;
+      await initialize();
     };
 
     const getColors = (
@@ -122,7 +123,7 @@ export default defineComponent({
       }
       return "green";
     };
-    fetchData();
+    initialize();
 
     return {
       inventory,

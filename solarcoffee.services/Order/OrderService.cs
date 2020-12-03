@@ -20,7 +20,7 @@ namespace solarcoffee.services.Order
         public OrderService(
             solarDbContext dbContext,
             IProductService productService,
-          IInventoryService inventoryService
+            IInventoryService inventoryService
             )
         {
             _db = dbContext;

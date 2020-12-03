@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace solarcoffee.web.ViewModels
 {
@@ -20,13 +19,13 @@ namespace solarcoffee.web.ViewModels
         public int Id { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime UpdatedOn { get; set; }
-        [MaxLength(35)] 
+  
         public string AdressLine1 { get; set; }
-        [MaxLength(35)]
+    
         public string AdressLine2 { get; set; }
-        [MaxLength(25)]
+    
         public string State { get; set; }
-        [MaxLength(10)]
+       
         public string PostalCode { get; set; }
     }
 }

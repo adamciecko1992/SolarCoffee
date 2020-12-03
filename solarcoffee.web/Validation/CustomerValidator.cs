@@ -23,16 +23,8 @@ public class CustomerModelValidator : AbstractValidator<CustomerModel>
         .WithMessage("Last name must be valid");
 
 
-
-
         RuleFor(Customer => Customer.PrimaryAdress)
           .SetValidator(v => new CustomerAdressModelValidator())
           .WithMessage("Error on validating primary adress");
-
-
-
-
-
-
     }
 }

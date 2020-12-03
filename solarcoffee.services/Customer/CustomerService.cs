@@ -108,10 +108,6 @@ namespace solarcoffee.services.Customer
             .Include((c) => c.PrimaryAdress)
             .ToList()
             .Find(c => c.Id == id);
-
-
-
-
         }
     }
 }

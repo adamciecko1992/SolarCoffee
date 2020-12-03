@@ -27,17 +27,6 @@ namespace solarcoffee.web.Controllers
         public ActionResult GetInvenotry()
         {
             _logger.LogInformation("Getting Inventory");
-            //var inventory = _inventoryService.GetCurrentInventory()
-            //     .Select(pi => new ProductInventoryModel
-            //     {
-            //         Id = pi.Id,
-            //         Product = _mapper.Map<ProductModel>(pi.Product),
-            //         IdealQuantity = pi.IdealQuantity,
-            //         QuantityOnHand = pi.QuantityOnHand
-            //     })
-            //     .OrderBy(inv => inv.Product.Name)
-            //     .ToList();
-
             var wholeInventory = _inventoryService.GetCurrentInventory();
             var inventoryViewData = wholeInventory.Select((inv) => _mapper.Map<ProductInventoryModel>(inv))
                 .OrderBy(inv => inv.Product.Name)
