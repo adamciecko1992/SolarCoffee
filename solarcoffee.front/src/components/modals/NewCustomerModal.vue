@@ -55,6 +55,13 @@
             v-model="customer.primaryAdress.country"
           />
         </li>
+        <li>
+          <Field
+            fieldName="example"
+            :customValidator="validators.onlyLettersWithSpaces"
+            @value-change="handleExample"
+          />
+        </li>
       </ul>
     </template>
     <template v-slot:footer>
@@ -70,14 +77,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref, watch } from "vue";
 import SolarButton from "@/components/SolarButton.vue";
 import SolarModal from "@/components/modals/SolarModal.vue";
+import Field from "@/components/Ui/Field.vue";
+import validators from "../../validation/Validators";
 import { ICustomer } from "../../types/Customer";
 
 export default defineComponent({
   name: "NewCustomerModal",
-  components: { SolarButton, SolarModal },
+  components: { SolarButton, SolarModal, Field },
   setup(_, ctx) {
     const customer = reactive({
       primaryAdress: {
@@ -95,6 +104,21 @@ export default defineComponent({
       lastName: "",
       id: 0,
     }) as ICustomer;
+    const valid = ref(false);
+    const handleExample = (value: any) => {
+      console.log(value);
+    };
+    console.log("rerender");
+
+    watch(
+      () => customer.firstName,
+      () => {
+        console.log(
+          "Firstname",
+          validators.onlyLettersNoSpaces(customer.firstName)
+        );
+      }
+    );
 
     function save() {
       ctx.emit("save-customer", customer);
@@ -106,6 +130,8 @@ export default defineComponent({
       save,
       close,
       customer,
+      validators,
+      handleExample,
     };
   },
 });
