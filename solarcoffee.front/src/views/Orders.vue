@@ -40,6 +40,7 @@ import { defineComponent, ref } from "vue";
 import { OrderService } from "../services/order-service";
 import { ISalesOrder } from "../types/SalesOrder";
 import SolarButton from "../components/SolarButton.vue";
+import isValidResponse from "../helpers/axiosTypeGuard";
 const orderService = new OrderService();
 
 export default defineComponent({
@@ -62,11 +63,15 @@ export default defineComponent({
       return isPaid ? "Paid in Full" : "Unpaid";
     }
     async function initialize() {
-      orders.value = await orderService.getOrders();
+      const response = await orderService.getOrders();
+      if (isValidResponse(response)) {
+        orders.value = response.data;
+      }
+      //else show something on UI
     }
 
     async function markComplete(orderId: number) {
-      await orderService.markOrderComplete(orderId);
+      const response = await orderService.markOrderComplete(orderId);
       await initialize();
     }
 

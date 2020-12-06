@@ -376,7 +376,7 @@ namespace solarcoffee.data.Migrations
                     b.Property<int?>("CustomerId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsPayed")
+                    b.Property<bool>("IsPaid")
                         .HasColumnType("boolean");
 
                     b.Property<DateTime>("UpdatedOn")
@@ -500,7 +500,7 @@ namespace solarcoffee.data.Migrations
                         .HasForeignKey("ProductId");
 
                     b.HasOne("solarcoffee.data.models.SalesOrder", null)
-                        .WithMany("SolarOrderedItems")
+                        .WithMany("LineItems")
                         .HasForeignKey("SalesOrderId");
                 });
 #pragma warning restore 612, 618

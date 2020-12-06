@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace solarcoffee.data.Migrations
 {
-    public partial class InitializeDb : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -266,7 +266,7 @@ namespace solarcoffee.data.Migrations
                     CreatedOn = table.Column<DateTime>(nullable: false),
                     UpdatedOn = table.Column<DateTime>(nullable: false),
                     CustomerId = table.Column<int>(nullable: true),
-                    IsPayed = table.Column<bool>(nullable: false)
+                    IsPaid = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

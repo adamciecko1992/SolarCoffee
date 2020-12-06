@@ -1,5 +1,5 @@
 //.d.ts signals that this is a typescript declaration file
-export interface IProduct {
+export interface IProduct extends IDictionary {
   id: number;
   name: string;
   createdOn: Date;
@@ -25,3 +25,8 @@ export interface IProductInventory {
   quantityOnHand: number;
   idealQuantity: number;
 }
+
+interface IDictionary {
+  [key: string]: any;
+}
+

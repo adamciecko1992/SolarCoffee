@@ -1,8 +1,8 @@
 <template>
   <div class="Field">
     <label :for="fieldName">{{ fieldName }}</label>
-    <input type="text" v-model="inputValue" @blur="touched = true" />
-    <span v-if="!valid && touched" class="Field_ErrorMessage">
+    <input type="text" v-model="inputValue" @blur="touched = true" required />
+    <span v-if="!valid && touched" class="Field__ErrorMessage">
       {{ localErrorMessage }}</span
     >
   </div>
@@ -10,8 +10,12 @@
 
 <script lang="ts">
 import { defineComponent, ref, PropType, watch } from "vue";
+import { debounce, values } from "lodash";
 export default defineComponent({
   props: {
+    value: {
+      type: String,
+    },
     fieldName: {
       type: String,
       required: true,
@@ -21,28 +25,27 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["value-change"],
+  emits: ["value-changed"],
   setup(props, ctx) {
-    const inputValue = ref("");
+    const inputValue = ref(props.value || "");
     const localErrorMessage = ref("");
     const valid = ref(false);
     const touched = ref(false);
 
+    watch(
+      inputValue,
+      debounce(() => {
+        //dekonstrukcja
+        const validatonResult = props.customValidator(inputValue.value)[0];
+        localErrorMessage.value = props.customValidator(inputValue.value)[1];
+        valid.value = validatonResult;
+        ctx.emit("value-changed", inputValue.value);
+      }, 500)
+    );
+
     const handleBlur = (): void => {
       touched.value = true;
     };
-
-    watch(inputValue, () => {
-      console.log(touched.value);
-      const [validatonResult, errorMessage] = props.customValidator(
-        inputValue.value
-      );
-      valid.value = validatonResult;
-      localErrorMessage.value = errorMessage;
-      if (valid.value) {
-        ctx.emit("value-change", inputValue.value);
-      }
-    });
 
     return {
       inputValue,
@@ -59,6 +62,7 @@ export default defineComponent({
 .Field {
   &__ErrorMessage {
     color: red;
+    font-size: 0.8rem;
   }
 
   input {

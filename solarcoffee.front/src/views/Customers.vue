@@ -47,11 +47,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, handleError, ref } from "vue";
 import { ICustomer } from "../types/Customer";
 import SolarButton from "@/components/SolarButton.vue";
 import CustomerService from "../services/customer-service";
 import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
+import handleErrors from "../helpers/handleErrors";
 const customerService = new CustomerService();
 
 export default defineComponent({
@@ -65,14 +66,18 @@ export default defineComponent({
       isCustomerModalVisible.value = true;
     };
     async function initialize() {
-      customers.value = await customerService.getCustomers();
-      console.log(customers.value);
+      //castuj typy
+      const fetchedData = await customerService.getCustomers();
+      if ("data" in fetchedData) {
+        customers.value = fetchedData.data;
+      }
     }
+
     const closeModal = (): void => {
       isCustomerModalVisible.value = false;
     };
     async function saveNewCustomer(newCustomer: ICustomer) {
-      await customerService.addCustomer(newCustomer);
+      const response = await customerService.addCustomer(newCustomer);
       isCustomerModalVisible.value = false;
       await initialize();
     }

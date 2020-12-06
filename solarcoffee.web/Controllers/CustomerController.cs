@@ -16,7 +16,7 @@ namespace solarcoffee.web.Controllers
         private readonly ICustomerService _customerService;
         private readonly IMapper _mapper;
 
-        public CustomerController( ILogger<CustomerController> logger, ICustomerService customerService, IMapper mapper) 
+        public CustomerController(ILogger<CustomerController> logger, ICustomerService customerService, IMapper mapper)
         {
             _logger = logger;
             _customerService = customerService;
@@ -25,7 +25,7 @@ namespace solarcoffee.web.Controllers
         [HttpPost("api/customer")]
         public ActionResult CreateCustomer([FromBody] CustomerModel customer)
         {
-            if (customer== null)
+            if (customer == null)
             {
                 _logger.LogInformation("No customer provided", customer);
 
@@ -36,8 +36,8 @@ namespace solarcoffee.web.Controllers
                 //dopisz do uzyskanego obiektu z body z requesta dateTimy
                 customer.CreatedOn = DateTime.UtcNow;
                 customer.UpdatedOn = DateTime.UtcNow;
-             
-           
+
+
                 var customerData = _mapper.Map<Customer>(customer);
                 //stworz nowego customera za pomoca metody w servisie 
                 var newCustomer = _customerService.CreateCustomer(customerData);
@@ -56,7 +56,6 @@ namespace solarcoffee.web.Controllers
                 .OrderByDescending((customer) => customer.CreatedOn)
                 .ToList();
 
-         
             return Ok(SerializedCustomers);
         }
 

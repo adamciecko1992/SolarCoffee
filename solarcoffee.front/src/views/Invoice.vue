@@ -175,6 +175,7 @@ import SolarButton from "../components/SolarButton.vue";
 import jspdf from "jspdf";
 import html2canvas from "html2canvas";
 import { useRouter } from "vue-router";
+import isValidResponse from "../helpers/axiosTypeGuard";
 
 export default defineComponent({
   components: {
@@ -292,9 +293,12 @@ export default defineComponent({
         createdOn: new Date(),
         updatedOn: new Date(),
       };
-      await invoiceService.makeNewInvoice(invoice);
-      downloadPdf();
-      router.push("/orders");
+      const response = await invoiceService.makeNewInvoice(invoice);
+
+      if (isValidResponse(response)) {
+        downloadPdf();
+        router.push("/orders");
+      }
     }
 
     const invoice = reactive({
@@ -307,12 +311,17 @@ export default defineComponent({
     //lifecycle
 
     async function initialize() {
-      customers.value = await customerService.getCustomers();
-      inventory.value = await inventoryService.getInventory();
+      const response = await customerService.getCustomers();
+      if (isValidResponse(response)) {
+        customers.value = response.data;
+      }
+      const inventoryResponse = await inventoryService.getInventory();
+      if (isValidResponse(inventoryResponse)) {
+        inventory.value = inventoryResponse.data;
+      }
     }
 
     initialize();
-    console.log(invoiceService);
 
     return {
       invoiceStep,

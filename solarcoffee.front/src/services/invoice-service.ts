@@ -1,15 +1,14 @@
-import axios from "axios";
 import { IInvoice } from "../types/Invoice";
+import reachToApi from "../services/reachToApi-service";
+
 
 export default class InvoiceService {
-  private apiUrl: string;
-  constructor() {
-    this.apiUrl = "https://localhost:5001/api/invoice";
-  }
-  public async makeNewInvoice(invoice: IInvoice): Promise<boolean> {
+
+  public async makeNewInvoice(invoice: IInvoice): Promise<any> {
     const now = new Date();
     invoice.createdOn = now;
     invoice.updatedOn = now;
-    return axios.post(`${this.apiUrl}`, invoice);
+    const response = await reachToApi<IInvoice>("post", "invoice/", invoice);
+    return response;
   }
 }

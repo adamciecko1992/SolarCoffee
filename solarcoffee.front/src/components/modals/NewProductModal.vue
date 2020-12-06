@@ -12,22 +12,27 @@
           />
         </li>
         <li>
-          <label for="productName">Name</label>
-          <input type="text" id="productName" v-model="newProduct.name" />
-        </li>
-
-        <li>
-          <label for="productDesc">Description</label>
-          <input
-            type="text"
-            id="productDesc"
-            v-model="newProduct.description"
+          <Field
+            fieldName="Name"
+            :customValidator="validators.onlyLettersAndNumbersWithSpaces"
+            @value-changed="handleInput($event, 'name')"
           />
         </li>
 
         <li>
-          <label for="productPrice">Price (USD)</label>
-          <input type="number" id="productPrice" v-model="newProduct.price" />
+          <Field
+            fieldName="Description"
+            :customValidator="validators.onlyLettersAndNumbersWithSpaces"
+            @value-changed="handleInput($event, 'description')"
+          />
+        </li>
+
+        <li>
+         <Field
+            fieldName="Price"
+            :customValidator="validators.onlyNumbers"
+            @value-changed="handleInput($event, 'price')"
+          />
         </li>
       </ul>
     </template>
@@ -44,14 +49,17 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
+import {IProduct} from "../../types/Product";
 import SolarButton from "@/components/SolarButton.vue";
 import SolarModal from "@/components/modals/SolarModal.vue";
-// import { IProduct } from "@/types/Product";
+import Field from "../Ui/Field.vue";
+import validators from "../../validation/Validators";
 
 export default defineComponent({
   components: {
     SolarButton,
     SolarModal,
+    Field,
   },
   emits: ["save-product", "close"],
 
@@ -65,7 +73,15 @@ export default defineComponent({
       name: "",
       price: 0,
       isArchived: false,
-    });
+    }) as IProduct;
+
+ 
+
+    function handleInput(value: string, field: keyof typeof newProduct) {
+       newProduct[field] = value;
+      }
+
+
     function close() {
       ctx.emit("close");
     }
@@ -73,7 +89,7 @@ export default defineComponent({
       ctx.emit("save-product", newProduct);
     }
 
-    return { save, close, newProduct };
+    return { save, close, newProduct,validators,handleInput };
   },
 });
 </script>

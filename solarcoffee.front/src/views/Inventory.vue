@@ -55,6 +55,8 @@ import shipmentModal from "../components/modals/ShipmentModal.vue";
 import { IShipment } from "../types/Shipment";
 import InventoryService from "../services/Inventory-service";
 import ProductService from "../services/product-service";
+import handleErrors from "../helpers/handleErrors";
+import requestIsValid from "../helpers/axiosTypeGuard";
 
 export default defineComponent({
   name: "Inventory",
@@ -73,10 +75,12 @@ export default defineComponent({
 
     const initialize = async () => {
       const response = await myInventoryService.getInventory();
-      inventory.value.length = 0;
-      response.forEach((invItem: IProductInventory) => {
-        inventory.value.push(invItem);
-      });
+      if (requestIsValid(response)) {
+        inventory.value.length = 0;
+        response.data.forEach((invItem: IProductInventory) => {
+          inventory.value.push(invItem);
+        });
+      }
     };
 
     const parsePrice = (price: number) => {
@@ -96,7 +100,9 @@ export default defineComponent({
     };
 
     const saveShipment = async (shipment: IShipment) => {
-      await myInventoryService.updateInventoryQuantity(shipment);
+      const response = await myInventoryService.updateInventoryQuantity(
+        shipment
+      );
       showShipment();
       await initialize();
     };
