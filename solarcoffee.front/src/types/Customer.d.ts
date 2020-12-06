@@ -19,6 +19,4 @@ export interface ICustomerAdress {
   country?: string;
 }
 
-interface IDictionary {
-  [key: string]: number | string | Date | ICustomerAdress;
-}
+

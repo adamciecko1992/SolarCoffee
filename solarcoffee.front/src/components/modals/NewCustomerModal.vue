@@ -7,6 +7,7 @@
           fieldName="Firstname"
           :customValidator="validators.onlyLettersNoSpaces"
           @value-changed="handleCustomerPropChange($event, 'firstName')"
+          @valid-changed="updateValid($event, 'firstname')"
         />
         <li>
           <Field
@@ -37,7 +38,7 @@
         <li>
           <Field
             fieldName="State"
-            :customValidator="validators.onlyNumbers"
+            :customValidator="validators.onlyLettersWithSpaces"
             @value-changed="handleAdressChange($event, 'state')"
           />
         </li>
@@ -61,7 +62,7 @@
       <solar-button
         type="button"
         aria-label="save new customer"
-        :disabled="!valid"
+        :isDisabled="!valid"
       >
         Save Customer
       </solar-button>
@@ -95,7 +96,7 @@ export default defineComponent({
         country: "",
         postalCode: "",
       },
-      //data powina byc po stronie backendu
+      //new Date powinien byc po stronie backendu
       createdOn: new Date(),
       updatedOn: new Date(),
       firstName: "",
@@ -104,14 +105,32 @@ export default defineComponent({
     });
 
     const valid = ref(false);
-
+    const validationState = reactive({
+      firstname: false,
+      lastname: false,
+      adressLine1: false,
+      adressLine2: false,
+      city: false,
+      state: false,
+      country: false,
+      postalCode: false,
+    });
+    function updateValid(value: boolean, property: string) {
+      validationState[property as keyof typeof validationState] = value;
+      const validationStatValues = Object.values(validationState);
+      const formValid = validationStatValues.every((val) => val === true);
+      console.log(formValid);
+      if (formValid) {
+        valid.value = true;
+      }
+    }
     function handleCustomerPropChange(value: string, field: keyof ICustomer) {
-      //dziala ale ...nie wyglada to dobrze
+      //wont work without never
       customer[field] = value as never;
     }
 
     function handleAdressChange(value: unknown, field: keyof ICustomerAdress) {
-      //jak wyzej
+      //wont work without never
       customer.primaryAdress[field] = value as never;
     }
 
@@ -129,6 +148,7 @@ export default defineComponent({
       handleCustomerPropChange,
       handleAdressChange,
       valid,
+      updateValid,
     };
   },
 });

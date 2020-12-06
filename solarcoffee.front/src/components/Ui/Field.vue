@@ -25,7 +25,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ["value-changed"],
+  emits: ["value-changed", "valid-changed"],
   setup(props, ctx) {
     const inputValue = ref(props.value || "");
     const localErrorMessage = ref("");
@@ -42,6 +42,13 @@ export default defineComponent({
         ctx.emit("value-changed", inputValue.value);
       }, 500)
     );
+    watch(valid, (isValid) => {
+      if (isValid) {
+        ctx.emit("valid-changed", true);
+      } else {
+        ctx.emit("valid-changed", false);
+      }
+    });
 
     const handleBlur = (): void => {
       touched.value = true;

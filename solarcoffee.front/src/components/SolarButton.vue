@@ -10,6 +10,7 @@
     v-else
     :class="['solar-button', { 'full-width': props.isFullWidth }]"
     @click="handleClick"
+    :disabled="isDisabled"
   >
     <slot></slot>
   </button>
@@ -23,6 +24,7 @@ export default defineComponent({
   props: {
     link: { type: String },
     isFullWidth: { type: Boolean },
+    isDisabled: { type: Boolean },
   },
 
   setup(props, ctx) {
