@@ -1,4 +1,4 @@
-export interface ICustomer {
+export interface ICustomer extends Record<keyof ICustomer, T> {
   id: number;
   createdOn: Date;
   updatedOn: Date;

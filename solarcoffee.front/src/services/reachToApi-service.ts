@@ -14,7 +14,7 @@ async function reachToApi<T>(method: HTTPAction, url: string, body = {}): Promis
     switch (method) {
         case "get":
             try {
-                response = await baseAxios.get(url);
+                response = await baseAxios.get<T>(url);
             }
             catch (error) {
                 response = error as AxiosError;
@@ -23,7 +23,7 @@ async function reachToApi<T>(method: HTTPAction, url: string, body = {}): Promis
             break;
         case "delete":
             try {
-                response = await baseAxios.delete(url);
+                response = await baseAxios.delete<T>(url);
             }
             catch (error) {
                 response = error as AxiosError;
@@ -32,7 +32,7 @@ async function reachToApi<T>(method: HTTPAction, url: string, body = {}): Promis
             break;
         case "patch":
             try {
-                response = await baseAxios.patch(url, body);
+                response = await baseAxios.patch<T>(url, body);
             }
             catch (error) {
                 response = error as AxiosError;
@@ -41,7 +41,7 @@ async function reachToApi<T>(method: HTTPAction, url: string, body = {}): Promis
             break;
         case "post":
             try {
-                response = await baseAxios.post(url, body);
+                response = await baseAxios.post<T>(url, body);
             }
             catch (error) {
                 response = error as AxiosError;

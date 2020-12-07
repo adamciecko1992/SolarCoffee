@@ -12,19 +12,18 @@ export default class CustomerService {
     return result;
   }
 
-  public async getCustomerById(id: number): Promise<any> {
-    const result = await reachAPI("get", `customer/${id}`);
+  public async getCustomerById(id: number): Promise<AxiosResponse<ICustomer> | AxiosError> {
+    const result = await reachAPI<ICustomer>("get", `customer/${id}`);
     return result;
   }
 
-  public async addCustomer(newCustomer: ICustomer) {
-    const result = await reachAPI("post", "customer", newCustomer);
+  public async addCustomer(newCustomer: ICustomer): Promise<AxiosResponse<ICustomer> | AxiosError> {
+    const result = await reachAPI<ICustomer>("post", "customer", newCustomer);
+    return result;
   }
 
-  public async deleteCustomer(customerId: number): Promise<boolean> {
-    const result: any = await axios.delete(
-      `https://localhost:5001/api/customer/${customerId}`
-    );
-    return result.data;
+  public async deleteCustomer(id: number): Promise<Promise<AxiosResponse<ICustomer> | AxiosError>> {
+    const result = await reachAPI<ICustomer>("delete", `customer/${id}`, id);
+    return result;
   }
 }

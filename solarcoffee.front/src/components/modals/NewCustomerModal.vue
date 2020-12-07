@@ -7,13 +7,14 @@
           fieldName="Firstname"
           :customValidator="validators.onlyLettersNoSpaces"
           @value-changed="handleCustomerPropChange($event, 'firstName')"
-          @valid-changed="updateValid($event, 'firstname')"
+          @valid-changed="updateValid($event, 'firstname', validationState)"
         />
         <li>
           <Field
             fieldName="Lastname"
             :customValidator="validators.onlyLettersNoSpaces"
             @value-changed="handleCustomerPropChange($event, 'lastName')"
+            @valid-changed="updateValid($event, 'lastname', validationState)"
           />
         </li>
         <li>
@@ -21,6 +22,7 @@
             fieldName="Adress"
             :customValidator="validators.onlyLettersAndNumbersWithSpaces"
             @value-changed="handleAdressChange($event, 'adressLine1')"
+            @valid-changed="updateValid($event, 'adressLine1', validationState)"
           />
         </li>
         <li>
@@ -28,18 +30,21 @@
             fieldName="Adress line 2 "
             :customValidator="validators.onlyLettersAndNumbersWithSpaces"
             @value-changed="handleAdressChange($event, 'adressLine2')"
+            @valid-changed="updateValid($event, 'adressLine2', validationState)"
           />
         </li>
         <Field
           fieldName="City"
           :customValidator="validators.onlyLettersWithSpaces"
           @value-changed="handleAdressChange($event, 'city')"
+          @valid-changed="updateValid($event, 'city', validationState)"
         />
         <li>
           <Field
             fieldName="State"
             :customValidator="validators.onlyLettersWithSpaces"
             @value-changed="handleAdressChange($event, 'state')"
+            @valid-changed="updateValid($event, 'state', validationState)"
           />
         </li>
         <li>
@@ -47,13 +52,15 @@
             fieldName="Postal code"
             :customValidator="validators.onlyNumbersAndDashes"
             @value-changed="handleAdressChange($event, 'postalCode')"
+            @valid-changed="updateValid($event, 'postalCode', validationState)"
           />
         </li>
         <li>
           <Field
             fieldName="Country"
-            :customValidator="validators.onlyLettersAndNumbersWithSpaces"
+            :customValidator="validators.onlyLettersWithSpaces"
             @value-changed="handleAdressChange($event, 'country')"
+            @valid-changed="updateValid($event, 'country', validationState)"
           />
         </li>
       </form>
@@ -63,6 +70,7 @@
         type="button"
         aria-label="save new customer"
         :isDisabled="!valid"
+        @click="save"
       >
         Save Customer
       </solar-button>
@@ -75,13 +83,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive, ref, watch } from "vue";
 import SolarButton from "@/components/SolarButton.vue";
 import SolarModal from "@/components/modals/SolarModal.vue";
 import Field from "@/components/Ui/Field.vue";
 import validators from "../../validation/Validators";
 import { ICustomer } from "../../types/Customer";
 import { ICustomerAdress } from "../../types/Customer";
+import updateValid from "../../helpers/updateValidationState";
 
 export default defineComponent({
   name: "NewCustomerModal",
@@ -115,26 +124,21 @@ export default defineComponent({
       country: false,
       postalCode: false,
     });
-    function updateValid(value: boolean, property: string) {
-      validationState[property as keyof typeof validationState] = value;
-      const validationStatValues = Object.values(validationState);
-      const formValid = validationStatValues.every((val) => val === true);
-      console.log(formValid);
-      if (formValid) {
-        valid.value = true;
-      }
-    }
+    watch(validationState, () => {
+      valid.value = Object.values(validationState).every((v) => v);
+      console.log(validationState);
+    });
+
     function handleCustomerPropChange(value: string, field: keyof ICustomer) {
-      //wont work without never
-      customer[field] = value as never;
+      (customer as any)[field] = value;
     }
 
     function handleAdressChange(value: unknown, field: keyof ICustomerAdress) {
-      //wont work without never
-      customer.primaryAdress[field] = value as never;
+      (customer as any).primaryAdress[field] = value;
     }
 
     function save() {
+      console.log("save");
       ctx.emit("save-customer", customer);
     }
     function close() {
@@ -149,6 +153,7 @@ export default defineComponent({
       handleAdressChange,
       valid,
       updateValid,
+      validationState,
     };
   },
 });

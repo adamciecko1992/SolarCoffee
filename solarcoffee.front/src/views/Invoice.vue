@@ -227,7 +227,9 @@ export default defineComponent({
       const selected = await customerService.getCustomerById(
         selectedCustomerId.value
       );
-      Object.assign(selectedCustomer, selected);
+      if (isValidResponse(selected)) {
+        Object.assign(selectedCustomer, selected.data);
+      }
     });
     //Invoice
     const invoiceStep = ref(1);

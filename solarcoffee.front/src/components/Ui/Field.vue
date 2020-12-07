@@ -2,9 +2,9 @@
   <div class="Field">
     <label :for="fieldName">{{ fieldName }}</label>
     <input type="text" v-model="inputValue" @blur="touched = true" required />
-    <span v-if="!valid && touched" class="Field__ErrorMessage">
-      {{ localErrorMessage }}</span
-    >
+    <p v-if="!valid && touched" class="Field__ErrorMessage">
+      {{ localErrorMessage }}
+    </p>
   </div>
 </template>
 
@@ -36,19 +36,19 @@ export default defineComponent({
       inputValue,
       debounce(() => {
         //dekonstrukcja
-        const validatonResult = props.customValidator(inputValue.value)[0];
-        localErrorMessage.value = props.customValidator(inputValue.value)[1];
-        valid.value = validatonResult;
+        const [validationResult, errorMessage] = props.customValidator(
+          inputValue.value
+        );
+        localErrorMessage.value = errorMessage;
+        valid.value = validationResult;
         ctx.emit("value-changed", inputValue.value);
       }, 500)
     );
-    watch(valid, (isValid) => {
-      if (isValid) {
-        ctx.emit("valid-changed", true);
-      } else {
-        ctx.emit("valid-changed", false);
-      }
-    });
+    watch(valid, (isValid) =>
+      isValid
+        ? ctx.emit("valid-changed", true)
+        : ctx.emit("valid-changed", false)
+    );
 
     const handleBlur = (): void => {
       touched.value = true;

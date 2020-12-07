@@ -71,19 +71,16 @@ namespace solarcoffee.services.Customer
                     Time = now,
                     Message = "Customer deleted",
                     Data = true,
-
                 };
             }
-            catch (Exception e)
+            catch
             {
-
                 return new ServiceResponse<bool>
                 {
                     IsSuccess = false,
                     Time = now,
                     Message = "Customer could not be deleted",
                     Data = false,
-
                 };
             }
         }

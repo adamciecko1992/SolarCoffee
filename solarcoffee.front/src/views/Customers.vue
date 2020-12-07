@@ -66,8 +66,8 @@ export default defineComponent({
       isCustomerModalVisible.value = true;
     };
     async function initialize() {
-      //castuj typy
       const fetchedData = await customerService.getCustomers();
+      //typeguard - no error
       if ("data" in fetchedData) {
         customers.value = fetchedData.data;
       }

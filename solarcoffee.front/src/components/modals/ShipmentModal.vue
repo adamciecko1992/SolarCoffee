@@ -27,7 +27,7 @@
 import { defineComponent, ref } from "vue";
 import solarModal from "./SolarModal.vue";
 import solarButton from "../SolarButton.vue";
-import { IProductInventory, IProduct } from "@/types/Product";
+import { IProductInventory, IProduct } from "../../types/Product";
 // import { IShipment } from "@/types/Shipment";
 
 export default defineComponent({
@@ -60,7 +60,6 @@ export default defineComponent({
         idProduct: selectedProduct.value.id,
         productAdjustment: qtyRecived.value,
       };
-      console.log(shipment);
       ctx.emit("save-shipment", shipment);
     };
     return { selectedProduct, qtyRecived: qtyRecived, close, save };

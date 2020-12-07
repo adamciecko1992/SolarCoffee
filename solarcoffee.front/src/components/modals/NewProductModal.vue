@@ -16,6 +16,7 @@
             fieldName="Name"
             :customValidator="validators.onlyLettersAndNumbersWithSpaces"
             @value-changed="handleInput($event, 'name')"
+            @valid-changed="updateValid($event, 'name', validationState)"
           />
         </li>
 
@@ -24,20 +25,27 @@
             fieldName="Description"
             :customValidator="validators.onlyLettersAndNumbersWithSpaces"
             @value-changed="handleInput($event, 'description')"
+            @valid-changed="updateValid($event, 'description', validationState)"
           />
         </li>
 
         <li>
-         <Field
+          <Field
             fieldName="Price"
             :customValidator="validators.onlyNumbers"
             @value-changed="handleInput($event, 'price')"
+            @valid-changed="updateValid($event, 'price', validationState)"
           />
         </li>
       </ul>
     </template>
     <template v-slot:footer>
-      <solar-button type="button" @click="save" aria-label="save new item">
+      <solar-button
+        type="button"
+        @click="save"
+        aria-label="save new item"
+        :disabled="!isValid"
+      >
         Save Product
       </solar-button>
       <solar-button type="button" @click="close" aria-label="close modal">
@@ -48,8 +56,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
-import {IProduct} from "../../types/Product";
+import { defineComponent, reactive, ref, watch } from "vue";
+import { IProduct } from "../../types/Product";
+import updateValid from "../../helpers/updateValidationState";
 import SolarButton from "@/components/SolarButton.vue";
 import SolarModal from "@/components/modals/SolarModal.vue";
 import Field from "../Ui/Field.vue";
@@ -64,7 +73,7 @@ export default defineComponent({
   emits: ["save-product", "close"],
 
   setup(_, ctx) {
-    const newProduct = reactive({
+    const newProduct: IProduct = reactive({
       createdOn: new Date(),
       updatedOn: new Date(),
       id: 0,
@@ -73,14 +82,23 @@ export default defineComponent({
       name: "",
       price: 0,
       isArchived: false,
-    }) as IProduct;
+    });
 
- 
+    const validationState = reactive({
+      description: false,
+      name: false,
+      price: false,
+    });
 
-    function handleInput(value: string, field: keyof typeof newProduct) {
-       newProduct[field] = value;
-      }
+    const isValid = ref(false);
 
+    watch(validationState, () => {
+      isValid.value = Object.values(validationState).every((v) => v);
+    });
+
+    function handleInput(value: string, field: keyof IProduct) {
+      (newProduct as any)[field] = value;
+    }
 
     function close() {
       ctx.emit("close");
@@ -89,7 +107,16 @@ export default defineComponent({
       ctx.emit("save-product", newProduct);
     }
 
-    return { save, close, newProduct,validators,handleInput };
+    return {
+      save,
+      close,
+      newProduct,
+      validators,
+      handleInput,
+      updateValid,
+      validationState,
+      isValid,
+    };
   },
 });
 </script>
