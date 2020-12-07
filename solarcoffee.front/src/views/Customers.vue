@@ -67,7 +67,6 @@ export default defineComponent({
     };
     async function initialize() {
       const fetchedData = await customerService.getCustomers();
-      //typeguard - no error
       if ("data" in fetchedData) {
         customers.value = fetchedData.data;
       }

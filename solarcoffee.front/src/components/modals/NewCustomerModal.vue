@@ -5,9 +5,9 @@
       <form class="newCustomer" @submit.prevent="save">
         <Field
           fieldName="Firstname"
-          :customValidator="validators.onlyLettersNoSpaces"
           @value-changed="handleCustomerPropChange($event, 'firstName')"
           @valid-changed="updateValid($event, 'firstname', validationState)"
+          :customAsyncValidator="validators.testingAsync"
         />
         <li>
           <Field

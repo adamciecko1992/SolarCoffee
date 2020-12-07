@@ -22,7 +22,9 @@ export default defineComponent({
     },
     customValidator: {
       type: Function as PropType<(input: string) => [boolean, string]>,
-      required: true,
+    },
+    customAsyncValidator: {
+      type: Function as PropType<(input: string) => Promise<[boolean, string]>>,
     },
   },
   emits: ["value-changed", "valid-changed"],
@@ -32,18 +34,33 @@ export default defineComponent({
     const valid = ref(false);
     const touched = ref(false);
 
-    watch(
-      inputValue,
-      debounce(() => {
-        //dekonstrukcja
-        const [validationResult, errorMessage] = props.customValidator(
-          inputValue.value
-        );
-        localErrorMessage.value = errorMessage;
-        valid.value = validationResult;
-        ctx.emit("value-changed", inputValue.value);
-      }, 500)
-    );
+    // if (props.customValidator) {
+    //   watch(inputValue, () => {
+    //     if (props.customValidator) {
+    //       const [validationResult, errorMessage] = props.customValidator(
+    //         inputValue.value
+    //       );
+    //       localErrorMessage.value = errorMessage;
+    //       valid.value = validationResult;
+    //       ctx.emit("value-changed", inputValue.value);
+    //     }
+    //   });
+    // }
+    if (props.customAsyncValidator) {
+      watch(
+        inputValue,
+        debounce(async () => {
+          // debounce(async () => {
+          // if (props.customAsyncValidator) {
+          if (props.customAsyncValidator) {
+            const result = await props.customAsyncValidator(inputValue.value);
+          }
+          // localErrorMessage.value = errorMessage;
+          // valid.value = validationResult;
+          // ctx.emit("value-changed", inputValue.value);
+        }, 1500)
+      );
+    }
     watch(valid, (isValid) =>
       isValid
         ? ctx.emit("valid-changed", true)

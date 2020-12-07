@@ -62,6 +62,11 @@ class Validators {
     const errorMessage = "Can contain only numbers (min 1, max 10)";
     return [valid, errorMessage];
   }
+  static async testingAsync() {
+    const response = await fetch("https://localhost:5001/api/customer");
+    const parsed = await response.json();
+    console.log(parsed);
+  }
 }
 
 export default Validators;
