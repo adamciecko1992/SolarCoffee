@@ -4,7 +4,6 @@ export default function updateValid<T>(
     objectReference: T
 ) {
     (objectReference as any)[property] = value;
-    const validationStateValues = Object.values(objectReference);
 }
 
 
