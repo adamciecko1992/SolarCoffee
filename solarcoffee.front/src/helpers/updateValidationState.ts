@@ -5,10 +5,6 @@ export default function updateValid<T>(
 ) {
     (objectReference as any)[property] = value;
     const validationStateValues = Object.values(objectReference);
-    const formValid = validationStateValues.every((val) => val);
-    // if (formValid) {
-    //   valid.value = true;
-    // }
 }
 
 
