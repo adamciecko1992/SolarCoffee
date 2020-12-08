@@ -34,30 +34,31 @@ export default defineComponent({
     const valid = ref(false);
     const touched = ref(false);
 
-    // if (props.customValidator) {
-    //   watch(inputValue, () => {
-    //     if (props.customValidator) {
-    //       const [validationResult, errorMessage] = props.customValidator(
-    //         inputValue.value
-    //       );
-    //       localErrorMessage.value = errorMessage;
-    //       valid.value = validationResult;
-    //       ctx.emit("value-changed", inputValue.value);
-    //     }
-    //   });
-    // }
+    if (props.customValidator) {
+      watch(inputValue, () => {
+        console.log("wach sync");
+        if (props.customValidator) {
+          const [validationResult, errorMessage] = props.customValidator(
+            inputValue.value
+          );
+          localErrorMessage.value = errorMessage;
+          valid.value = validationResult;
+          ctx.emit("value-changed", inputValue.value);
+        }
+      });
+    }
     if (props.customAsyncValidator) {
       watch(
         inputValue,
         debounce(async () => {
-          // debounce(async () => {
-          // if (props.customAsyncValidator) {
           if (props.customAsyncValidator) {
-            const result = await props.customAsyncValidator(inputValue.value);
+            const [
+              validationResult,
+              errorMessage,
+            ] = await props.customAsyncValidator(inputValue.value);
+            localErrorMessage.value = errorMessage;
+            valid.value = validationResult;
           }
-          // localErrorMessage.value = errorMessage;
-          // valid.value = validationResult;
-          // ctx.emit("value-changed", inputValue.value);
         }, 1500)
       );
     }

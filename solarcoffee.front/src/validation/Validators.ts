@@ -64,8 +64,17 @@ class Validators {
   }
   static async testingAsync() {
     const response = await fetch("https://localhost:5001/api/customer");
-    const parsed = await response.json();
-    console.log(parsed);
+    const errorMessage = "Async test failed"
+    if (response.ok) {
+      const parsed = await response.json();
+      //if(parsed - do validation){
+      return [true, errorMessage]
+      //}
+
+    }
+    else {
+      return [false, errorMessage]
+    }
   }
 }
 
