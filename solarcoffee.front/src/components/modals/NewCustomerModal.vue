@@ -7,42 +7,42 @@
           <Field
             fieldName="Firstname"
             @value-changed="handleCustomerPropChange($event, 'firstName')"
-            :validationState="validationState.FirstName"
+            :validationState="validationState.firstName"
           />
         </li>
         <li>
           <Field
             fieldName="Lastname"
             @value-changed="handleCustomerPropChange($event, 'lastName')"
-            :validationState="validationState.LastName"
+            :validationState="validationState.lastName"
           />
         </li>
         <li>
           <Field
             fieldName="Adress"
             @value-changed="handleAdressChange($event, 'adressLine1')"
-            :validationState="validationState.PrimaryAdressAdressLine1"
+            :validationState="validationState.primaryAdressAdressLine1"
           />
         </li>
         <li>
           <Field
             fieldName="Adress line 2 "
             @value-changed="handleAdressChange($event, 'adressLine2')"
-            :validationState="validationState.PrimaryAdressAdressLine2"
+            :validationState="validationState.primaryAdressAdressLine2"
           />
         </li>
         <li>
           <Field
             fieldName="State"
             @value-changed="handleAdressChange($event, 'state')"
-            :validationState="validationState.PrimaryAdressState"
+            :validationState="validationState.primaryAdressState"
           />
         </li>
         <li>
           <Field
             fieldName="Postal code"
             @value-changed="handleAdressChange($event, 'postalCode')"
-            :validationState="validationState.PrimaryAdressPostalCode"
+            :validationState="validationState.primaryAdressPostalCode"
           />
         </li>
         <p v-if="unknownServerError !== ''">
@@ -72,6 +72,8 @@ import { ICustomerAdress } from "../../types/Customer";
 import customerService from "../../services/customer-service";
 import CustomerService from "../../services/customer-service";
 import isValidResponse from "../../helpers/axiosTypeGuard";
+import firstToLower from "../../helpers/firstToLower";
+import firstToUpper from "../../helpers/firstToUpper";
 import { AxiosError } from "axios";
 
 export default defineComponent({
@@ -95,12 +97,12 @@ export default defineComponent({
     });
 
     const validationState = reactive({
-      FirstName: { valid: false, messages: [] },
-      LastName: { valid: false, messages: [] },
-      PrimaryAdressAdressLine1: { valid: false, messages: [] },
-      PrimaryAdressAdressLine2: { valid: false, messages: [] },
-      PrimaryAdressState: { valid: false, messages: [] },
-      PrimaryAdressPostalCode: { valid: false, messages: [] },
+      firstName: { valid: false, messages: [] },
+      lastName: { valid: false, messages: [] },
+      primaryAdressAdressLine1: { valid: false, messages: [] },
+      primaryAdressAdressLine2: { valid: false, messages: [] },
+      primaryAdressState: { valid: false, messages: [] },
+      primaryAdressPostalCode: { valid: false, messages: [] },
     });
 
     function handleCustomerPropChange(value: string, field: keyof ICustomer) {
@@ -122,7 +124,9 @@ export default defineComponent({
       switch (errorStatus) {
         case 422:
           (() => {
-            const errorsNames = Object.keys(errors);
+            const errorsNames = Object.keys(errors).map((errorName) =>
+              firstToLower(errorName)
+            );
             errorsNames.forEach((errorName) => {
               if (errorName in validationState) {
                 validationState[
@@ -130,7 +134,7 @@ export default defineComponent({
                 ].valid = false;
                 validationState[
                   errorName as keyof typeof validationState
-                ].messages = errors[errorName];
+                ].messages = errors[firstToUpper(errorName)];
               }
             });
           })();
