@@ -13,6 +13,8 @@ public class CustomerAdressModelValidator : AbstractValidator<CustomerAdressMode
         .Must(name => name.Replace(" ", string.Empty).All(c => char.IsLetter(c)))
         .WithMessage("State cannot include numbers and symbols");
 
+
+
         RuleFor(Adress => Adress.AdressLine1)
         .MinimumLength(3)
         .MaximumLength(28)
@@ -34,7 +36,7 @@ public class CustomerAdressModelValidator : AbstractValidator<CustomerAdressMode
         .Must(name => name.Replace(" ", string.Empty).Replace("-", string.Empty).All(c => char.IsDigit(c)))
         .WithMessage("Postal code must be numbers and - only");
 
-   
+
 
 
 

@@ -3,75 +3,55 @@
     <template v-slot:header> Add New Customer </template>
     <template v-slot:body>
       <form class="newCustomer" @submit.prevent="save">
-        <Field
-          fieldName="Firstname"
-          @value-changed="handleCustomerPropChange($event, 'firstName')"
-          @valid-changed="updateValid($event, 'firstname', validationState)"
-          :customAsyncValidator="validators.testingAsync"
-        />
+        <li>
+          <Field
+            fieldName="Firstname"
+            @value-changed="handleCustomerPropChange($event, 'firstName')"
+            :validationState="validationState.FirstName"
+          />
+        </li>
         <li>
           <Field
             fieldName="Lastname"
-            :customValidator="validators.onlyLettersNoSpaces"
             @value-changed="handleCustomerPropChange($event, 'lastName')"
-            @valid-changed="updateValid($event, 'lastname', validationState)"
+            :validationState="validationState.LastName"
           />
         </li>
         <li>
           <Field
             fieldName="Adress"
-            :customValidator="validators.onlyLettersAndNumbersWithSpaces"
             @value-changed="handleAdressChange($event, 'adressLine1')"
-            @valid-changed="updateValid($event, 'adressLine1', validationState)"
+            :validationState="validationState.PrimaryAdressAdressLine1"
           />
         </li>
         <li>
           <Field
             fieldName="Adress line 2 "
-            :customValidator="validators.onlyLettersAndNumbersWithSpaces"
             @value-changed="handleAdressChange($event, 'adressLine2')"
-            @valid-changed="updateValid($event, 'adressLine2', validationState)"
+            :validationState="validationState.PrimaryAdressAdressLine2"
           />
         </li>
-        <Field
-          fieldName="City"
-          :customValidator="validators.onlyLettersWithSpaces"
-          @value-changed="handleAdressChange($event, 'city')"
-          @valid-changed="updateValid($event, 'city', validationState)"
-        />
         <li>
           <Field
             fieldName="State"
-            :customValidator="validators.onlyLettersWithSpaces"
             @value-changed="handleAdressChange($event, 'state')"
-            @valid-changed="updateValid($event, 'state', validationState)"
+            :validationState="validationState.PrimaryAdressState"
           />
         </li>
         <li>
           <Field
             fieldName="Postal code"
-            :customValidator="validators.onlyNumbersAndDashes"
             @value-changed="handleAdressChange($event, 'postalCode')"
-            @valid-changed="updateValid($event, 'postalCode', validationState)"
+            :validationState="validationState.PrimaryAdressPostalCode"
           />
         </li>
-        <li>
-          <Field
-            fieldName="Country"
-            :customValidator="validators.onlyLettersWithSpaces"
-            @value-changed="handleAdressChange($event, 'country')"
-            @valid-changed="updateValid($event, 'country', validationState)"
-          />
-        </li>
+        <p v-if="unknownServerError !== ''">
+          {{ unknownServerError }}
+        </p>
       </form>
     </template>
     <template v-slot:footer>
-      <solar-button
-        type="button"
-        aria-label="save new customer"
-        :isDisabled="!valid"
-        @click="save"
-      >
+      <solar-button type="button" aria-label="save new customer" @click="save">
         Save Customer
       </solar-button>
 
@@ -83,50 +63,44 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref, watch } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import SolarButton from "@/components/SolarButton.vue";
 import SolarModal from "@/components/modals/SolarModal.vue";
 import Field from "@/components/Ui/Field.vue";
-import validators from "../../validation/Validators";
 import { ICustomer } from "../../types/Customer";
 import { ICustomerAdress } from "../../types/Customer";
-import updateValid from "../../helpers/updateValidationState";
+import customerService from "../../services/customer-service";
+import CustomerService from "../../services/customer-service";
+import isValidResponse from "../../helpers/axiosTypeGuard";
+import { AxiosError } from "axios";
 
 export default defineComponent({
   name: "NewCustomerModal",
   components: { SolarButton, SolarModal, Field },
+  emits: ["customer-added", "close"],
   setup(_, ctx) {
+    //form part
     const customer: ICustomer = reactive({
-      primaryAdress: {
-        adressLine1: "",
-        adressLine2: "",
-        city: "",
-        state: "",
-        country: "",
-        postalCode: "",
-      },
-      //new Date powinien byc po stronie backendu
-      createdOn: new Date(),
-      updatedOn: new Date(),
       firstName: "",
       lastName: "",
       id: 0,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      primaryAdress: {
+        adressLine1: "",
+        adressLine2: "",
+        state: "",
+        postalCode: "",
+      },
     });
 
-    const valid = ref(false);
     const validationState = reactive({
-      firstname: false,
-      lastname: false,
-      adressLine1: false,
-      adressLine2: false,
-      city: false,
-      state: false,
-      country: false,
-      postalCode: false,
-    });
-    watch(validationState, () => {
-      valid.value = Object.values(validationState).every((v) => v);
-      console.log(validationState);
+      FirstName: { valid: false, messages: [] },
+      LastName: { valid: false, messages: [] },
+      PrimaryAdressAdressLine1: { valid: false, messages: [] },
+      PrimaryAdressAdressLine2: { valid: false, messages: [] },
+      PrimaryAdressState: { valid: false, messages: [] },
+      PrimaryAdressPostalCode: { valid: false, messages: [] },
     });
 
     function handleCustomerPropChange(value: string, field: keyof ICustomer) {
@@ -137,10 +111,46 @@ export default defineComponent({
       (customer as any).primaryAdress[field] = value;
     }
 
-    function save() {
-      console.log("save");
-      ctx.emit("save-customer", customer);
+    //submit/errors part
+    const customerService = new CustomerService();
+    const unknownServerError = ref("");
+
+    function handleSubmitError(error: AxiosError) {
+      const errorStatus = error.response?.status;
+      const errors = error.response?.data.errors;
+
+      switch (errorStatus) {
+        case 422:
+          (() => {
+            const errorsNames = Object.keys(errors);
+            errorsNames.forEach((errorName) => {
+              if (errorName in validationState) {
+                validationState[
+                  errorName as keyof typeof validationState
+                ].valid = false;
+                validationState[
+                  errorName as keyof typeof validationState
+                ].messages = errors[errorName];
+              }
+            });
+          })();
+          break;
+        //maybe some other cases in the future
+        default:
+          unknownServerError.value =
+            "Unknown server error, if error will occure again please contact our support";
+      }
     }
+
+    async function save() {
+      const response = await customerService.addCustomer(customer);
+      if (isValidResponse(response)) {
+        ctx.emit("customer-added");
+      } else {
+        handleSubmitError(response);
+      }
+    }
+
     function close() {
       ctx.emit("close");
     }
@@ -148,12 +158,10 @@ export default defineComponent({
       save,
       close,
       customer,
-      validators,
       handleCustomerPropChange,
       handleAdressChange,
-      valid,
-      updateValid,
       validationState,
+      unknownServerError,
     };
   },
 });

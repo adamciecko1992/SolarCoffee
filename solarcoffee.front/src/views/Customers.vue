@@ -40,7 +40,7 @@
 
     <new-customer-modal
       @close="closeModal"
-      @save-customer="saveNewCustomer"
+      @customer-added="customerAdded"
       v-if="isCustomerModalVisible"
     />
   </div>
@@ -75,8 +75,7 @@ export default defineComponent({
     const closeModal = (): void => {
       isCustomerModalVisible.value = false;
     };
-    async function saveNewCustomer(newCustomer: ICustomer) {
-      const response = await customerService.addCustomer(newCustomer);
+    async function customerAdded(newCustomer: ICustomer) {
       isCustomerModalVisible.value = false;
       await initialize();
     }
@@ -97,7 +96,7 @@ export default defineComponent({
       closeModal,
       deleteCustomer,
       created,
-      saveNewCustomer,
+      customerAdded,
       isCustomerModalVisible,
     };
   },

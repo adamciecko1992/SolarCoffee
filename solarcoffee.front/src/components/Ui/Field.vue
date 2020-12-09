@@ -1,16 +1,22 @@
 <template>
   <div class="Field">
     <label :for="fieldName">{{ fieldName }}</label>
-    <input type="text" v-model="inputValue" @blur="touched = true" required />
-    <p v-if="!valid && touched" class="Field__ErrorMessage">
-      {{ localErrorMessage }}
-    </p>
+    <input type="text" v-model="inputValue" />
+    <div class="Field__ErrorMessage">
+      <div v-if="showErrors">
+        <p v-for="m in validationState.messages" :key="m">{{ m }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, watch } from "vue";
-import { debounce, values } from "lodash";
+import { defineComponent, ref, watch } from "vue";
+
+interface ValidationObject {
+  valid: boolean;
+  messages: string[];
+}
 export default defineComponent({
   props: {
     value: {
@@ -20,64 +26,24 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    customValidator: {
-      type: Function as PropType<(input: string) => [boolean, string]>,
-    },
-    customAsyncValidator: {
-      type: Function as PropType<(input: string) => Promise<[boolean, string]>>,
+    validationState: {
+      type: Object as () => ValidationObject,
+      required: true,
     },
   },
-  emits: ["value-changed", "valid-changed"],
+  emits: ["value-changed"],
   setup(props, ctx) {
     const inputValue = ref(props.value || "");
-    const localErrorMessage = ref("");
-    const valid = ref(false);
-    const touched = ref(false);
-
-    if (props.customValidator) {
-      watch(inputValue, () => {
-        console.log("wach sync");
-        if (props.customValidator) {
-          const [validationResult, errorMessage] = props.customValidator(
-            inputValue.value
-          );
-          localErrorMessage.value = errorMessage;
-          valid.value = validationResult;
-          ctx.emit("value-changed", inputValue.value);
-        }
-      });
-    }
-    if (props.customAsyncValidator) {
-      watch(
-        inputValue,
-        debounce(async () => {
-          if (props.customAsyncValidator) {
-            const [
-              validationResult,
-              errorMessage,
-            ] = await props.customAsyncValidator(inputValue.value);
-            localErrorMessage.value = errorMessage;
-            valid.value = validationResult;
-          }
-        }, 1500)
-      );
-    }
-    watch(valid, (isValid) =>
-      isValid
-        ? ctx.emit("valid-changed", true)
-        : ctx.emit("valid-changed", false)
-    );
-
-    const handleBlur = (): void => {
-      touched.value = true;
-    };
-
+    const showErrors = ref(false);
+    watch(props.validationState, () => {
+      showErrors.value = true;
+    });
+    watch(inputValue, () => {
+      ctx.emit("value-changed", inputValue);
+    });
     return {
       inputValue,
-      localErrorMessage,
-      touched,
-      valid,
-      handleBlur,
+      showErrors,
     };
   },
 });
@@ -87,7 +53,7 @@ export default defineComponent({
 .Field {
   &__ErrorMessage {
     color: red;
-    font-size: 0.8rem;
+    font-size: 0.6rem;
   }
 
   input {

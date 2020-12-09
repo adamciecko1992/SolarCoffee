@@ -17,7 +17,13 @@ export default class CustomerService {
   }
 
   public async addCustomer(newCustomer: ICustomer) {
-    const result = await reachAPI("post", "customer", newCustomer);
+    let result: AxiosError | AxiosResponse<ICustomer>;
+    try {
+      result = await reachAPI<ICustomer>("post", "customer", newCustomer);
+    } catch (error) {
+      result = error as AxiosError;
+    }
+    return result;
   }
 
   public async deleteCustomer(customerId: number): Promise<boolean> {
