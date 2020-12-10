@@ -1,12 +1,11 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { ICustomer } from "@/types/Customer";
-// import { IServiceResponse } from "@/types/ServiceResponse";
-import reachAPI from "./reachToApi-service"
+import reachAPI from "./reachToApi-service";
 
 
 
 export default class CustomerService {
-  public static async getCustomers() {
+  public async getCustomers() {
     const result = await reachAPI<ICustomer[]>("get", "customer");
     return result;
   }

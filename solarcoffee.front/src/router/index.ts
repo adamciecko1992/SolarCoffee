@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Inventory from "../views/Inventory.vue";
 import Customers from "../views/Customers.vue";
-import Invoice from "../views/Invoice.vue";
+import Invoice from "../views/Invoice/Invoice.vue";
 import Orders from "../views/Orders.vue";
 
 const routes: Array<RouteRecordRaw> = [

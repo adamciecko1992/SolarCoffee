@@ -49,9 +49,9 @@
 <script lang="ts">
 import { defineComponent, handleError, ref } from "vue";
 import { ICustomer } from "../types/Customer";
-import SolarButton from "@/components/SolarButton.vue";
+import SolarButton from "../components/SolarButton.vue";
 import CustomerService from "../services/customer-service";
-import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
+import NewCustomerModal from "../components/modals/NewCustomerModal.vue";
 import handleErrors from "../helpers/handleErrors";
 const customerService = new CustomerService();
 
@@ -84,10 +84,6 @@ export default defineComponent({
       await initialize();
     }
 
-    async function created() {
-      await initialize();
-    }
-
     initialize();
 
     return {
@@ -95,7 +91,6 @@ export default defineComponent({
       showNewCustomerModal,
       closeModal,
       deleteCustomer,
-      created,
       customerAdded,
       isCustomerModalVisible,
     };

@@ -64,9 +64,9 @@
 
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
-import SolarButton from "@/components/SolarButton.vue";
-import SolarModal from "@/components/modals/SolarModal.vue";
-import Field from "@/components/Ui/Field.vue";
+import SolarButton from "../../components/SolarButton.vue";
+import SolarModal from "../../components/modals/SolarModal.vue";
+import Field from "../../components/Ui/Field.vue";
 import { ICustomer } from "../../types/Customer";
 import { ICustomerAdress } from "../../types/Customer";
 import customerService from "../../services/customer-service";
