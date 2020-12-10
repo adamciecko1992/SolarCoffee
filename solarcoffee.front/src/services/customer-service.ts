@@ -6,7 +6,7 @@ import reachAPI from "./reachToApi-service"
 
 
 export default class CustomerService {
-  public async getCustomers() {
+  public static async getCustomers() {
     const result = await reachAPI<ICustomer[]>("get", "customer");
     return result;
   }
