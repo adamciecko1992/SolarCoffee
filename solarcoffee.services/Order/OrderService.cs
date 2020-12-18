@@ -28,11 +28,7 @@ namespace solarcoffee.services.Order
             _productService = productService;
         }
 
-        /// <summary>
-        /// Generates Invoidce for particular order and updates Database in terms of quantity of a given product in inventory
-        /// </summary>
-        /// <param name="order"></param>
-        /// <returns></returns>
+     
         public ServiceResponse<bool> GenerateOpenOrder(SalesOrder order)
         {
            foreach(var item  in order.LineItems)
@@ -69,19 +65,13 @@ namespace solarcoffee.services.Order
                 .ToList();
         }
 
-        /// <summary>
-        /// Marks an open sales order as paid
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
         public ServiceResponse<SalesOrder> MarkFullfilled(int id)
         {
             var order = _db.SalesOrders.Find(id);
             order.UpdatedOn = DateTime.UtcNow;
             order.IsPaid = true;
 
-            
-                //entity framework znajdzie order po obiekcie ktory przesylamy do update i wprowadzi w nim zmiany
+
                 _db.SalesOrders.Update(order);
                 _db.SaveChanges();
                 return new ServiceResponse<SalesOrder>

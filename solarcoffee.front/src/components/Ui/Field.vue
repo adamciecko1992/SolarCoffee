@@ -17,6 +17,7 @@ interface ValidationObject {
   valid: boolean;
   messages: string[];
 }
+
 export default defineComponent({
   props: {
     value: {

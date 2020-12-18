@@ -26,8 +26,7 @@ namespace solarcoffee.web.Controllers
             _mapper = mapper;
         }
         [HttpPost("/api/invoice")]
-        //[FromBody] to decorator który zaznacza ze tresc ma byc wyciagnieta z body requesta, poki ma odpowiednia strukture bedzie smigac
-        public ActionResult GenerateNewOrder([FromBody] InvoiceModel invoice) {
+            public ActionResult GenerateNewOrder([FromBody] InvoiceModel invoice) {
             _logger.LogInformation("Generating Invoice");
             var order = _mapper.Map<SalesOrder>(invoice);
             order.Customer = _customerService.GetById(invoice.CustomerId);

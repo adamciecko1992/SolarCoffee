@@ -17,7 +17,7 @@ namespace solarcoffee.test
         {
             //make copy of service and db for test purposes
             var options = new DbContextOptionsBuilder<solarDbContext>()
-               //dodaje dostep do zapamietanej bazy danych
+        
                .UseInMemoryDatabase("gets_all").Options;
             using var context = new solarDbContext(options);
             //systemUnderTesting

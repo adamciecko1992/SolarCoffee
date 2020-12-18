@@ -48,7 +48,6 @@ namespace solarcoffee.web
             services.AddDbContext<solarDbContext>((opts) =>
             {
                 opts.EnableDetailedErrors();
-                //zajrzy do appsettings.development.json i znajdzie tam connection string do postgresql
                 opts.UseNpgsql(Configuration.GetConnectionString("solar.dev"));
 
             });
@@ -58,11 +57,7 @@ namespace solarcoffee.web
             });
 
             services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CustomerModelValidator>());
-            //za kazdym razem gdy bede potrzebowal IPorductService daj mi instancje ProductService
-            //Injection in framework, zawsze daje nowa instancje kiedy jest potrzebny
-            //Taki serrvice lifetime, uzywany dla statless services bo sa lekkie, ejsli mielibysmy jakas 
-            //gruba usluge to dobrze by bylo stworzyc jedna instancje i wykorzystywac ja wielokrotnie, ale moze to prowadzic,
-            //do nieoczekiwanych zachowan
+           
             services.AddSingleton<ILoggerManager, LoggerMenager>();
             services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IInventoryService, InventoryService>();
@@ -74,7 +69,7 @@ namespace solarcoffee.web
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
         {
 

@@ -9,9 +9,7 @@ public class ShipmentModelValidator : AbstractValidator<ShipmentModel>
     RuleFor(shpiment => shpiment.IdProduct)
     .NotEmpty();
 
-
-
-    RuleFor(shpiment => shpiment.ProductAdjustment)
+     RuleFor(shpiment => shpiment.ProductAdjustment)
     .NotEmpty();
   }
 }

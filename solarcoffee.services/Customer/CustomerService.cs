@@ -48,7 +48,7 @@ namespace solarcoffee.services.Customer
         {
             var customer = _db.Customers.Find(id);
             var now = DateTime.UtcNow;
-            //Find nie przyjmuje cb tylko wartosc po ktorej ma znalezc wpis
+           
             if (customer == null)
             {
                 return new ServiceResponse<bool>
@@ -62,7 +62,7 @@ namespace solarcoffee.services.Customer
             }
             try
             {
-                //remove to metoda wbudowana w entityFramework, nie wysylamy id tylko caly obiekt ktory chcemy usunac z danej tabeli (rzad)
+               
                 _db.Customers.Remove(customer);
                 _db.SaveChanges();
                 return new ServiceResponse<bool>
@@ -88,19 +88,16 @@ namespace solarcoffee.services.Customer
         public List<data.models.Customer> GetAllCustomers()
         {
             return _db.Customers
-                 //żeby EntityFramework zwrocił również model w modelu trzeba go zamieścić
-                 //metodą Include
+                
                  .Include((cutomer) => cutomer.PrimaryAdress)
-                 //posortuj alfabetycznie nazwiskami
+                
                  .OrderBy((customer) => customer.LastName)
                  .ToList();
         }
 
         public data.models.Customer GetById(int id)
         {
-            //mozna przerobic na zwracanie serviceResponse
-            //FirstOrDefault zwraca pierwszy match lub defult dla typu tutaj null
-            //Firs zwraca pierwszy match a jak nie to wywala exception null
+           
             return _db.Customers
             .Include((c) => c.PrimaryAdress)
             .ToList()

@@ -23,7 +23,7 @@ namespace solarcoffee.services.ModelValidationOverrider
                 options.InvalidModelStateResponseFactory = (context) =>
                 {
                 var errors = context.ModelState.ToDictionary(
-                           //kvp => string.Join("", kvp.Key.Split('.').Select(x => x.ToCamelCase())),
+                   
                            kvp => string.Join("", kvp.Key.Split('.')),
                            kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).Select(RemoveNameFromErrorMessage).ToArray());
 

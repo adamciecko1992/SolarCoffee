@@ -33,15 +33,13 @@ namespace solarcoffee.web.Controllers
             }
             else
             {
-                //dopisz do uzyskanego obiektu z body z requesta dateTimy
+            
                 customer.CreatedOn = DateTime.UtcNow;
                 customer.UpdatedOn = DateTime.UtcNow;
 
 
                 var customerData = _mapper.Map<Customer>(customer);
-                //stworz nowego customera za pomoca metody w servisie 
                 var newCustomer = _customerService.CreateCustomer(customerData);
-                //zwroc odpowiedz z servera 
                 return Ok(newCustomer);
             }
         }
@@ -49,7 +47,6 @@ namespace solarcoffee.web.Controllers
         public ActionResult GetAllCustomers()
         {
             _logger.LogInformation("Getting all customers");
-            //pobierz dane wszystkich uzytkownikow jako modele data
             var customers = _customerService.GetAllCustomers();
 
             var SerializedCustomers = customers.Select((customer) => _mapper.Map<CustomerModel>(customer))

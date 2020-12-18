@@ -21,10 +21,7 @@ namespace solarcoffee.services.Inventory
             _logger = logger;
         }
 
-        /// <summary>
-        /// Returns all current inventory from the database
-        /// </summary>
-        /// <returns></returns>
+   
         public List<ProductInventory> GetCurrentInventory()
         {
             return _db.ProductInventories
@@ -33,13 +30,7 @@ namespace solarcoffee.services.Inventory
                 .ToList();
         }
 
-        /// <summary>
-        /// Updates number of units available of the provided product id
-        /// Adjusts QuantityOnHand by adjustment value
-        /// </summary>
-        /// <param name="id">productId</param>
-        /// <param name="adjustment">number of units added / removed from inventory</param>
-        /// <returns></returns>
+       
         public ServiceResponse<ProductInventory> UpdateUnitsAvailable(int id, int adjustment)
         {
 
@@ -75,11 +66,7 @@ namespace solarcoffee.services.Inventory
             
         }
 
-        /// <summary>
-        /// Gets a ProductInventory instance by Product ID
-        /// </summary>
-        /// <param name="productId"></param>
-        /// <returns></returns>
+      
         public ProductInventory GetByProductId(int productId)
         {
             return _db.ProductInventories
@@ -87,11 +74,6 @@ namespace solarcoffee.services.Inventory
                 .FirstOrDefault(pi => pi.Product.Id == productId);
         }
 
-        /// <summary>
-        /// Return Snapshot history for the previous 6 hours
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
         public List<ProductInventorySnapshot> GetSnapshotHistory()
         {
             var earliest = DateTime.UtcNow - TimeSpan.FromHours(2);
@@ -104,9 +86,6 @@ namespace solarcoffee.services.Inventory
                 .ToList();
         }
 
-        /// <summary>
-        /// Creates a Snapshot record using the provided ProductInventory instance
-        /// </summary>
         private void CreateSnapshot()
         {
             var now = DateTime.UtcNow;
